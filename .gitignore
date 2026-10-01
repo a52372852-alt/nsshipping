@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+samples/*.xlsx
+samples/expected.json
+test-results/
+playwright-report/
+outputs/
+.DS_Store
+*.tsbuildinfo
+.sites-runtime/
+public/vendor/crypto-worker.js
