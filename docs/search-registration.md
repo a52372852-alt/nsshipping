@@ -4,7 +4,7 @@
 사이트맵: https://nshome.life/sitemap.xml
 크롤링 안내: https://nshome.life/robots.txt
 
-현재 첫 화면, 사용 방법 목록, 가이드 5개, 개인정보 안내, 마켓별 변환 소개 3개, FAQ, 서비스 소개, 문의, 이용 안내의 15개 공개 페이지를 사이트맵에 포함한다. 각 페이지에는 고유 제목·설명과 nshome.life 기준 canonical이 있다. 주문·파일·개인 설정은 사이트맵이나 정적 HTML에 포함하지 않는다.
+현재 첫 화면, 사용 방법 목록, 가이드 5개, 개인정보 안내, 마켓별 변환 소개 3개, FAQ, 서비스 소개, 문의, 이용 안내의 16개 공개 페이지를 사이트맵에 포함한다. 각 페이지에는 고유 제목·설명과 nshome.life 기준 canonical이 있다. 주문·파일·개인 설정은 사이트맵이나 정적 HTML에 포함하지 않는다.
 
 ## Google Search Console
 

@@ -6,6 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     "",
     "/guides",
+    "/tools",
     "/privacy",
     "/help",
     "/about",

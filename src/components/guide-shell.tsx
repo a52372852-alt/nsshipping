@@ -18,6 +18,7 @@ export function GuideShell({ children }: { children: React.ReactNode }) {
             </span>
           </Link>
           <nav aria-label="안내 메뉴">
+            <Link href="/tools">지원 마켓·택배사</Link>
             <Link href="/guides">사용 방법</Link>
             <Link href="/privacy">개인정보 보호</Link>
           </nav>

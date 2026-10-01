@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const paths = [
+  "/tools",
   "/tools/coupang-lotte",
   "/tools/smartstore-lotte",
   "/tools/toss-lotte",
@@ -85,4 +86,26 @@ test("새 콘텐츠는 모바일에서 넘치지 않고 광고 스크립트를 �
     path: "outputs/verification/seo-home-desktop.png",
     fullPage: true,
   });
+});
+
+test("지원 비교와 간결한 개인정보 안내 및 공유 이미지", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/tools");
+  await expect(page.locator("main")).toContainText("최초 등록·항목 연결");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "https://nshome.life/ns-shipping-share.png",
+  );
+  const image = await request.get("/ns-shipping-share.png");
+  expect(image.ok()).toBe(true);
+  expect(image.headers()["content-type"]).toContain("image/png");
+  await page.goto("/privacy");
+  await expect(page.locator("main")).toContainText(
+    "현재 광고 및 외부 방문 분석 도구를 사용하지 않습니다.",
+  );
+  await expect(page.locator("main")).not.toContainText(
+    "향후 안내 콘텐츠에 광고를 연결하면",
+  );
 });

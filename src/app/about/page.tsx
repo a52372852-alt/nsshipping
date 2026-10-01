@@ -3,7 +3,7 @@ import { GuideShell } from "@/components/guide-shell";
 import { pageMetadata } from "@/lib/seo/metadata";
 export const metadata = pageMetadata(
   "서비스 소개와 지원 범위",
-  "NS Shipping은 온라인 판매자의 주문 엑셀을 브라우저에서 롯데택배 양식으로 정리하는 무료 도구입니다. 운영 방향과 지원 범위를 안내합니다.",
+  "NS Shipping은 온라인 판매자의 주문 엑셀을 브라우저에서 롯데택배 또는 직접 등록한 택배사 양식으로 정리하는 무료 도구입니다. 운영 방향과 지원 범위를 안내합니다.",
   "/about",
 );
 export default function AboutPage() {
@@ -18,8 +18,8 @@ export default function AboutPage() {
             조금 더 간단하게.
           </h1>
           <p>
-            NS Shipping은 온라인 판매자가 마켓별 주문 파일을 롯데택배 등록용
-            엑셀로 정리할 수 있도록 만든 무료 웹 도구입니다.
+            NS Shipping은 온라인 판매자가 마켓별 주문 파일을 롯데택배 또는 직접
+            등록한 택배사 엑셀로 정리할 수 있도록 만든 무료 웹 도구입니다.
           </p>
         </header>
         <section className="guide-section">
@@ -27,7 +27,7 @@ export default function AboutPage() {
           <p>
             쿠팡·스마트스토어·토스쇼핑의 지원 주문 양식을 읽고,
             수취인·주소·상품·수량을 공통 주문 표에서 확인할 수 있게 합니다.
-            사용자가 검토한 주문은 기존 롯데택배 출력 양식으로 내려받습니다.
+            사용자가 검토한 주문은 선택한 택배사 양식으로 내려받습니다.
           </p>
           <p>
             마켓과 택배사 사이에 반복해서 복사하는 일을 줄이려는 도구이며, 각
@@ -38,9 +38,9 @@ export default function AboutPage() {
         <section className="guide-section">
           <h2>파일은 사용자의 기기에서 처리합니다.</h2>
           <p>
-            회원가입, 결제, AI API를 사용하지 않습니다. 주문 파일을 서비스
-            서버에 올리지 않고 사용자의 브라우저에서 읽고 변환합니다. 주문
-            내역은 다른 사용자와 공유되지 않습니다.
+            회원가입이나 결제 없이 이용할 수 있습니다. 주문 파일을 서비스 서버에
+            올리지 않고 사용자의 브라우저에서 읽고 변환합니다. 주문 내역은 다른
+            사용자와 공유되지 않습니다.
           </p>
           <Link href="/privacy" className="guide-inline-link">
             설정 보관과 개인정보 안내 →
@@ -69,8 +69,8 @@ export default function AboutPage() {
             공개하지 않습니다.
           </p>
           <p>
-            변환 기능은 무료로 제공하고, 향후 안내 콘텐츠의 광고로 운영 비용을
-            충당할 계획입니다. 현재 실제 광고 코드는 연결되어 있지 않습니다.
+            변환 기능은 무료입니다. 지원 범위와 파일 처리 방식은 이 안내와 사용
+            방법에서 확인할 수 있습니다.
           </p>
         </section>
         <section className="guide-section">

@@ -5,7 +5,7 @@ import { guides } from "@/content/guides";
 import { GuideShell } from "@/components/guide-shell";
 export const metadata = pageMetadata(
   "주문 엑셀 변환 사용 방법",
-  "스마트스토어·쿠팡 주문 엑셀 변환, 암호 파일 열기, 오류·중복 확인 방법을 안내합니다. 무료로 롯데택배 양식으로 변환하세요.",
+  "스마트스토어·쿠팡 주문 엑셀 변환, 암호 파일 열기, 오류·중복 확인 방법을 안내합니다. 롯데택배와 사용자 택배사 양식 등록·변환 방법을 확인하세요.",
   "/guides",
 );
 export default function GuidesPage() {

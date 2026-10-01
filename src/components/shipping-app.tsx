@@ -519,6 +519,7 @@ export default function ShippingApp() {
             </div>
             <nav aria-label="서비스 정보">
               {[
+                ["/tools", "지원 마켓·택배사"],
                 ["/help", "자주 묻는 질문"],
                 ["/about", "서비스 소개"],
                 ["/terms", "이용 안내"],
