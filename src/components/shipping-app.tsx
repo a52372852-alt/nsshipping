@@ -46,7 +46,6 @@ import {
 import { FileList } from "./file-list";
 import { OrderSummary } from "./order-summary";
 import { ConversionActions } from "./conversion-actions";
-import { conversionTools } from "@/content/tools";
 import { ServiceGuide } from "./service-guide";
 type SettingsTab = "sender" | "rules";
 export default function ShippingApp() {
@@ -488,56 +487,6 @@ export default function ShippingApp() {
             </div>
           )}
           <ServiceGuide />
-          <section
-            className="market-resources"
-            aria-labelledby="market-resources-title"
-          >
-            <span className="small-label">마켓별 변환 안내</span>
-            <h2 id="market-resources-title">
-              내 주문 파일에 맞는 방법을 확인하세요.
-            </h2>
-            <p>
-              롯데택배는 기존 양식을 바로 사용하고, CJ·한진·로젠·우체국은 내
-              양식을 등록해 변환합니다. 아래는 마켓별 롯데택배 항목 안내입니다.
-            </p>
-            <div className="resource-grid">
-              {conversionTools.map((tool) => (
-                <Link
-                  key={tool.slug}
-                  href={`/tools/${tool.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  prefetch={false}
-                >
-                  <strong>{tool.market} → 롯데택배</strong>
-                  <span>
-                    파일 준비와 출력 항목 보기 ↗
-                    <span className="sr-only"> (새 탭)</span>
-                  </span>
-                </Link>
-              ))}
-            </div>
-            <nav aria-label="서비스 정보">
-              {[
-                ["/tools", "지원 마켓·택배사"],
-                ["/help", "자주 묻는 질문"],
-                ["/about", "서비스 소개"],
-                ["/terms", "이용 안내"],
-                ["/contact", "문의"],
-              ].map(([href, label]) => (
-                <Link
-                  key={href}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  prefetch={false}
-                >
-                  {label}
-                  <span className="sr-only"> (새 탭)</span>
-                </Link>
-              ))}
-            </nav>
-          </section>
         </div>
       </main>
       <footer>
@@ -547,7 +496,26 @@ export default function ShippingApp() {
             NS <strong>Shipping</strong>
           </span>
         </a>
-        <span>발송 준비를 더 간결하게.</span>
+        <nav aria-label="서비스 정보" className="footer-service-links">
+          {[
+            ["/tools", "지원 마켓·택배사"],
+            ["/help", "자주 묻는 질문"],
+            ["/about", "서비스 소개"],
+            ["/terms", "이용 안내"],
+            ["/contact", "문의"],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              prefetch={false}
+            >
+              {label}
+              <span className="sr-only"> (새 탭)</span>
+            </Link>
+          ))}
+        </nav>
         <span>© {new Date().getFullYear()} NS Shipping</span>
       </footer>
       {settings && (

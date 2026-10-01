@@ -2447,3 +2447,19 @@ footer > span:last-child {
     width: 100%;
   }
 }
+
+.footer-service-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 20px;
+  font-size: 13px;
+}
+.footer-service-links a {
+  color: #64748b;
+  text-decoration: none;
+}
+.footer-service-links a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
