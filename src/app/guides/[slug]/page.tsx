@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { pageMetadata, breadcrumbs, SITE_URL } from "@/lib/seo/metadata";
+import { StructuredData } from "@/components/structured-data";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { guides } from "@/content/guides";
@@ -12,11 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const guide = guides.find((item) => item.slug === slug);
   if (!guide) notFound();
-  return {
-    title: guide.title,
-    description: guide.description,
-    alternates: { canonical: `/guides/${guide.slug}` },
-  };
+  return pageMetadata(guide.title, guide.description, `/guides/${guide.slug}`);
 }
 export default async function GuidePage({ params }: Props) {
   const { slug } = await params;
@@ -25,6 +23,28 @@ export default async function GuidePage({ params }: Props) {
   return (
     <GuideShell>
       <article className="guide-container guide-article">
+        <StructuredData
+          data={[
+            breadcrumbs([
+              { name: "무료 엑셀 변환", path: "/" },
+              { name: "사용 방법", path: "/guides" },
+              { name: guide.title, path: `/guides/${slug}` },
+            ]),
+            {
+              "@context": "https://schema.org",
+              "@type": "Article",
+              headline: guide.title,
+              description: guide.description,
+              mainEntityOfPage: `${SITE_URL}/guides/${slug}`,
+              author: {
+                "@type": "Organization",
+                name: "NS Shipping",
+                url: `${SITE_URL}/about`,
+              },
+              inLanguage: "ko-KR",
+            },
+          ]}
+        />
         <nav className="guide-breadcrumb" aria-label="현재 위치">
           <Link href="/guides">사용 방법</Link>
           <span aria-hidden="true">/</span>
@@ -34,6 +54,9 @@ export default async function GuidePage({ params }: Props) {
           <span className="small-label">{guide.label}</span>
           <h1>{guide.title}</h1>
           <p>{guide.intro}</p>
+          <p className="editorial-date">
+            작성·검토: NS Shipping · 현재 변환 동작 기준
+          </p>
         </header>
         <nav className="guide-toc" aria-label="이 글의 목차">
           <h2>이 글에서 확인할 내용</h2>

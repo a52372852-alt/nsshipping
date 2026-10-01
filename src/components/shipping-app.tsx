@@ -36,6 +36,7 @@ import {
 import { FileList } from "./file-list";
 import { OrderSummary } from "./order-summary";
 import { ConversionActions } from "./conversion-actions";
+import { conversionTools } from "@/content/tools";
 import { ServiceGuide } from "./service-guide";
 type SettingsTab = "sender" | "rules";
 export default function ShippingApp() {
@@ -404,6 +405,55 @@ export default function ShippingApp() {
             </div>
           )}
           <ServiceGuide />
+          <section
+            className="market-resources"
+            aria-labelledby="market-resources-title"
+          >
+            <span className="small-label">마켓별 변환 안내</span>
+            <h2 id="market-resources-title">
+              내 주문 파일에 맞는 방법을 확인하세요.
+            </h2>
+            <p>
+              현재 내장 출력은 롯데택배 양식입니다. 각 마켓의 항목 연결과 확인할
+              점을 안내합니다.
+            </p>
+            <div className="resource-grid">
+              {conversionTools.map((tool) => (
+                <Link
+                  key={tool.slug}
+                  href={`/tools/${tool.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  prefetch={false}
+                >
+                  <strong>{tool.market} → 롯데택배</strong>
+                  <span>
+                    파일 준비와 출력 항목 보기 ↗
+                    <span className="sr-only"> (새 탭)</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+            <nav aria-label="서비스 정보">
+              {[
+                ["/help", "자주 묻는 질문"],
+                ["/about", "서비스 소개"],
+                ["/terms", "이용 안내"],
+                ["/contact", "문의"],
+              ].map(([href, label]) => (
+                <Link
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  prefetch={false}
+                >
+                  {label}
+                  <span className="sr-only"> (새 탭)</span>
+                </Link>
+              ))}
+            </nav>
+          </section>
         </div>
       </main>
       <footer>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdSlot } from "./ad-slot";
 import { Package, ArrowLeft } from "lucide-react";
 export function GuideShell({ children }: { children: React.ReactNode }) {
   return (
@@ -27,11 +28,16 @@ export function GuideShell({ children }: { children: React.ReactNode }) {
       </header>
       <main id="guide-content" className="guide-main">
         {children}
+        <AdSlot position="bottom" />
       </main>
       <footer className="guide-footer">
         <span>NS Shipping · 무료 주문 엑셀 변환</span>
         <Link href="/guides">사용 방법</Link>
+        <Link href="/help">자주 묻는 질문</Link>
+        <Link href="/about">서비스 소개</Link>
         <Link href="/privacy">개인정보 보호</Link>
+        <Link href="/terms">이용 안내</Link>
+        <Link href="/contact">문의</Link>
       </footer>
     </>
   );

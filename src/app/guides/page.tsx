@@ -1,14 +1,13 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ArrowUpRight, ShieldCheck } from "lucide-react";
 import { guides } from "@/content/guides";
 import { GuideShell } from "@/components/guide-shell";
-export const metadata: Metadata = {
-  title: "주문 엑셀 변환 사용 방법",
-  description:
-    "스마트스토어·쿠팡 주문 엑셀 변환, 암호 파일 열기, 오류·중복 확인 방법을 안내합니다. 무료로 롯데택배 양식으로 변환하세요.",
-  alternates: { canonical: "/guides" },
-};
+export const metadata = pageMetadata(
+  "주문 엑셀 변환 사용 방법",
+  "스마트스토어·쿠팡 주문 엑셀 변환, 암호 파일 열기, 오류·중복 확인 방법을 안내합니다. 무료로 롯데택배 양식으로 변환하세요.",
+  "/guides",
+);
 export default function GuidesPage() {
   return (
     <GuideShell>

@@ -2200,3 +2200,87 @@ footer > span:last-child {
     gap: 16px;
   }
 }
+
+/* Public editorial navigation stays separate from order processing. */
+.editorial-date {
+  font-size: 13px !important;
+  color: #64748b !important;
+}
+.market-resources {
+  margin: 40px 0;
+  padding: 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #fff;
+}
+.market-resources h2 {
+  margin: 12px 0;
+  font-size: 23px;
+  line-height: 1.45;
+}
+.market-resources > p {
+  color: #64748b;
+  line-height: 1.8;
+}
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.resource-grid > a {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #172554;
+}
+.resource-grid > a:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+.resource-grid span {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.market-resources nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.market-resources nav a {
+  color: #1d4ed8;
+  font-size: 14px;
+}
+.ad-slot {
+  max-width: 900px;
+  min-height: 160px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  text-align: center;
+  color: #64748b;
+}
+.ad-slot > span {
+  font-size: 12px;
+}
+@media (max-width: 700px) {
+  .market-resources {
+    padding: 22px 18px;
+  }
+  .resource-grid {
+    grid-template-columns: 1fr;
+  }
+  .market-resources h2 {
+    font-size: 21px;
+  }
+  .guide-footer {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}

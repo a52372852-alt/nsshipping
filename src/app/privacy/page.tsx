@@ -1,13 +1,12 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { GuideShell } from "@/components/guide-shell";
-export const metadata: Metadata = {
-  title: "개인정보 보호와 주문 파일 처리 방식",
-  description:
-    "NS Shipping의 브라우저 안 엑셀 처리, 주문 데이터 초기화, 발송인·비밀번호 설정 저장 및 공용 PC 이용 시 주의점을 안내합니다.",
-  alternates: { canonical: "/privacy" },
-};
+export const metadata = pageMetadata(
+  "개인정보 보호와 주문 파일 처리 방식",
+  "브라우저 내부 엑셀 처리, 주문 데이터 초기화, 발송인·비밀번호 저장과 공용 PC 이용 안내를 확인하세요.",
+  "/privacy",
+);
 export default function PrivacyPage() {
   return (
     <GuideShell>
@@ -128,6 +127,31 @@ export default function PrivacyPage() {
             현재 앱에는 광고, 외부 분석 스크립트, 주문 업로드 API가 없습니다. 이
             페이지는 현재 구현의 처리 방식을 설명하는 안내입니다.
           </p>
+        </section>
+        <section className="guide-section">
+          <h2>광고와 방문 통계는 어떻게 처리하나요?</h2>
+          <p>
+            현재 Google AdSense와 외부 방문 분석 코드는 활성화되어 있지
+            않습니다. 향후 안내 콘텐츠에 광고를 연결하면 광고 제공자가 쿠키나
+            접속 정보를 처리할 수 있으므로, 적용하는 광고 방식에 맞춰 이 안내와
+            필요한 동의 절차를 먼저 갱신합니다.
+          </p>
+          <p>
+            주문 파일을 서버로 보내지 않는다는 안내는 엑셀 변환에 대한
+            설명입니다. 향후 광고의 쿠키·접속정보 처리까지 없다는 뜻은 아닙니다.
+            주문정보를 광고나 분석 이벤트에 포함하지 않습니다.
+          </p>
+        </section>
+        <section className="guide-section">
+          <h2>개인정보 관련 문의</h2>
+          <p>
+            문의 주소는{" "}
+            <a href="mailto:marine485@gmail.com">marine485@gmail.com</a>입니다.
+            이메일로 자발적으로 보내는 문의는 브라우저 내부 엑셀 처리와 별개로
+            메일 서비스를 통해 전달됩니다. 원본 주문 파일과 고객 개인정보는
+            첨부하지 마세요.
+          </p>
+          <Link href="/contact">문의 방법 자세히 보기 →</Link>
         </section>
         <div className="guide-cta">
           <Link href="/#upload" className="button button-primary">
