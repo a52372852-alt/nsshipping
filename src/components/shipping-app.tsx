@@ -1,6 +1,16 @@
 "use client";
 import { createId } from "@/lib/createId";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+import {
+  CARRIERS,
+  type Carrier,
+  type TemplateProfile,
+} from "@/lib/templates/types";
+const CarrierTemplate = dynamic(
+  () => import("./carrier-template").then((m) => m.CarrierTemplate),
+  { ssr: false, loading: () => <p>택배사 양식 설정을 불러오는 중…</p> },
+);
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Package,
@@ -40,6 +50,9 @@ import { conversionTools } from "@/content/tools";
 import { ServiceGuide } from "./service-guide";
 type SettingsTab = "sender" | "rules";
 export default function ShippingApp() {
+  const [carrier, setCarrier] = useState<Carrier>("lotte");
+  const [template, setTemplate] = useState<TemplateProfile | null>(null);
+  const [templateEditing, setTemplateEditing] = useState(false);
   const [files, setFiles] = useState<ImportedFile[]>([]);
   const [orders, setOrders] = useState<NormalizedOrder[]>([]);
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
@@ -179,19 +192,35 @@ export default function ShippingApp() {
     });
   }
   async function download() {
-    if (!sender.name.trim() || !sender.phone.trim()) {
+    if (carrier === "lotte" && (!sender.name.trim() || !sender.phone.trim())) {
       setSettings("sender");
       return;
     }
     setDownloading(true);
     setNotice("");
     try {
-      const { exportLotte, downloadName } =
-        await import("@/lib/excel/exporters/lotte");
-      const buffer = await exportLotte(
-        eligible.map((row) => row.order),
-        sender,
-      );
+      let buffer: ArrayBuffer;
+      let fileName: string;
+      if (carrier === "lotte") {
+        const { exportLotte, downloadName } =
+          await import("@/lib/excel/exporters/lotte");
+        buffer = await exportLotte(
+          eligible.map((row) => row.order),
+          sender,
+        );
+        fileName = downloadName();
+      } else {
+        if (!template || template.carrier !== carrier || templateEditing)
+          throw new Error("택배사 양식과 항목 연결을 먼저 확인해주세요.");
+        const { exportCustomTemplate } =
+          await import("@/lib/templates/workbook");
+        buffer = await exportCustomTemplate(
+          template,
+          eligible.map((row) => row.order),
+          sender,
+        );
+        fileName = `${template.name.replace(/[\\/:*?"<>|]/g, "_")}_출고.xlsx`;
+      }
       const url = URL.createObjectURL(
         new Blob([buffer], {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -199,13 +228,13 @@ export default function ShippingApp() {
       );
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = downloadName();
+      anchor.download = fileName;
       document.body.append(anchor);
       anchor.click();
       anchor.remove();
       setTimeout(() => URL.revokeObjectURL(url), 60000);
       setNotice(
-        `${eligible.length}건의 롯데택배 파일을 생성했습니다. 다운로드 폴더를 확인해주세요.`,
+        `${eligible.length}건의 ${CARRIERS[carrier]} 파일을 생성했습니다. 다운로드 폴더를 확인해주세요.`,
       );
     } catch (error) {
       setNotice(
@@ -269,7 +298,7 @@ export default function ShippingApp() {
           <h1>
             마켓 주문 엑셀을
             <br />
-            <span>롯데택배 양식으로</span> 한 번에.
+            <span>내 택배사 양식으로</span> 한 번에.
           </h1>
           <p className="hero-description">
             쿠팡 · 스마트스토어 · 토스쇼핑 주문 엑셀을 올리면
@@ -335,7 +364,7 @@ export default function ShippingApp() {
               <ArrowRight size={17} className="flow-arrow" />
               <span className="lotte-badge">
                 <Package size={17} />
-                롯데택배
+                {CARRIERS[carrier]}
               </span>
               <span className="auto-label">양식 자동 변환</span>
             </div>
@@ -355,11 +384,60 @@ export default function ShippingApp() {
               </>
             )}
           </div>
+          <section className="carrier-section" aria-labelledby="carrier-title">
+            <div className="section-kicker">
+              <span>02</span>
+              <h2 id="carrier-title">출력할 택배사 선택</h2>
+            </div>
+            <div
+              className="carrier-options"
+              role="group"
+              aria-label="택배사 선택"
+            >
+              {Object.entries(CARRIERS).map(([id, label]) => (
+                <button
+                  key={id}
+                  aria-pressed={carrier === id}
+                  disabled={busy || downloading}
+                  onClick={() => {
+                    if (id === carrier) return;
+                    setCarrier(id as Carrier);
+                    setTemplate(null);
+                    setTemplateEditing(id !== "lotte");
+                  }}
+                >
+                  {label}
+                  <small>
+                    {id === "lotte"
+                      ? "기존 양식 바로 사용"
+                      : "내 양식 등록 · 재사용"}
+                  </small>
+                </button>
+              ))}
+            </div>
+            {carrier === "lotte" ? (
+              <p className="carrier-note">
+                기존 롯데택배 출력 양식을 그대로 사용합니다. 별도의 양식 등록은
+                필요 없습니다.
+              </p>
+            ) : (
+              <CarrierTemplate
+                key={carrier}
+                carrier={carrier}
+                profile={template}
+                onChange={setTemplate}
+                orders={eligible.map((row) => row.order)}
+                sender={sender}
+                disabled={busy || downloading}
+                onEditingChange={setTemplateEditing}
+              />
+            )}
+          </section>
           {files.length > 0 && (
             <div className="workspace" ref={workRef}>
               <div className="workspace-title">
                 <div className="section-kicker">
-                  <span>02</span> 주문 확인 및 변환
+                  <span>03</span> 주문 확인 및 변환
                 </div>
                 <Button
                   variant="ghost"
@@ -399,6 +477,11 @@ export default function ShippingApp() {
                     downloading={downloading}
                     setSettings={setSettings}
                     download={download}
+                    carrierLabel={CARRIERS[carrier]}
+                    custom={carrier !== "lotte"}
+                    templateReady={
+                      carrier === "lotte" || (!!template && !templateEditing)
+                    }
                   />
                 </>
               )}
@@ -414,8 +497,8 @@ export default function ShippingApp() {
               내 주문 파일에 맞는 방법을 확인하세요.
             </h2>
             <p>
-              현재 내장 출력은 롯데택배 양식입니다. 각 마켓의 항목 연결과 확인할
-              점을 안내합니다.
+              롯데택배는 기존 양식을 바로 사용하고, CJ·한진·로젠·우체국은 내
+              양식을 등록해 변환합니다. 아래는 마켓별 롯데택배 항목 안내입니다.
             </p>
             <div className="resource-grid">
               {conversionTools.map((tool) => (

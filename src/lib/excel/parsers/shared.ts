@@ -79,6 +79,13 @@ export function parseSheet(
         })
         .filter(Boolean)
         .join(" ");
+    // Optional components for user templates; the existing full address stays unchanged.
+    const addressParts = adapter.addressFallback?.map((header) => {
+      const cell = getByHeader(header);
+      return cell ? cellText(cell) : "";
+    });
+    order.addressBase = addressParts?.[0] || order.address;
+    order.addressDetail = addressParts?.[0] ? addressParts[1] || "" : "";
     for (const field of mapped) {
       const names = adapter.mapping[field] ?? [];
       const cell = names.map(getByHeader).find(Boolean);

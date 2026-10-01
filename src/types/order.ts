@@ -18,6 +18,8 @@ export interface NormalizedOrder {
   receiverPhone2: string;
   postalCode: string;
   address: string;
+  addressBase?: string;
+  addressDetail?: string;
   productName: string;
   optionName: string;
   quantity: number;

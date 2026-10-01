@@ -119,12 +119,15 @@ export default async function ToolPage({ params }: Props) {
         <aside className="guide-note">
           <strong>현재 내장 출력은 롯데택배입니다.</strong>
           <p>
-            다른 택배사의 양식을 임의로 제공하지 않습니다. 송장번호 발급이나
-            집하 접수 기능은 포함되지 않습니다.
+            CJ·한진·로젠·우체국은 본인의 실제 양식을 등록해 변환할 수 있습니다.
+            송장번호 발급이나 집하 접수 기능은 포함되지 않습니다.
           </p>
         </aside>
         <nav className="guide-related" aria-label="관련 안내">
           <h2>작업 중 궁금한 점이 있나요?</h2>
+          <Link href="/guides/custom-carrier-template">
+            다른 택배사 양식 등록·변환 방법 →
+          </Link>
           <Link href={tool.guide}>{tool.market} 관련 상세 안내 →</Link>
           <Link href="/help">자주 묻는 질문 →</Link>
           <Link href="/privacy">개인정보 처리 방식 →</Link>

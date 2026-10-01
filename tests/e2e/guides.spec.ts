@@ -26,7 +26,7 @@ test("안내를 새 탭에서 읽어도 원래 주문과 개인정보가 유지�
     .getByRole("link", { name: "사용 방법" })
     .click();
   const help = await popupPromise;
-  await expect(help.locator(".guide-card")).toHaveCount(4);
+  await expect(help.locator(".guide-card")).toHaveCount(5);
   await help.screenshot({
     path: "outputs/verification/guides-desktop.png",
     fullPage: true,
@@ -56,7 +56,7 @@ test("안내를 새 탭에서 읽어도 원래 주문과 개인정보가 유지�
       help.getByRole("link", { name: "엑셀 변환 화면 열기" }),
     ).toHaveAttribute("href", "/#upload");
   }
-  expect(titles.size).toBe(4);
+  expect(titles.size).toBe(5);
   await help.getByRole("link", { name: "개인정보 처리 방식 보기" }).click();
   await expect(help.locator("h1")).toContainText("내 브라우저에서 처리");
   await expect(help.locator("main")).toContainText(

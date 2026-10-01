@@ -21,9 +21,9 @@ export default function TermsPage() {
         <section className="guide-section">
           <h2>무료 이용과 지원 형식</h2>
           <p>
-            회원가입과 결제 없이 지원 마켓의 .xlsx 주문 파일을 롯데택배 엑셀로
-            변환할 수 있습니다. 파일당 20MB 제한이 있으며 기기 성능과 파일
-            구조에 따라 처리가 어려울 수 있습니다.
+            회원가입과 결제 없이 지원 마켓의 .xlsx 주문 파일을 롯데택배 또는
+            직접 등록한 택배사 엑셀로 변환할 수 있습니다. 파일당 20MB 제한이
+            있으며 기기 성능과 파일 구조에 따라 처리가 어려울 수 있습니다.
           </p>
         </section>
         <section className="guide-section">

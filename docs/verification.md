@@ -46,3 +46,16 @@
 - 390px 모바일 너비 확인, 새 페이지 광고/분석 요청 없음, 비활성 AdSlot은 공간을 차지하지 않음.
 - 문의 주소 marine485@gmail.com은 사용자 제공.
 - 실제 AdSense 코드·ads.txt·검색 계정 확인값은 미제공이므로 미설치. 광고 신청·승인·검색 소유권 등록·색인 여부는 검증 범위 밖.
+
+## 2026-10-02 Custom carrier templates
+
+- Original Lotte exporter and template-schema identical to commit 22db34b.
+- Actual 10-order workbook ZIP comparison against original output: no differences except creation timestamps in docProps/core.xml.
+- Optional addressBase/addressDetail added for custom templates; original full address and Lotte output unchanged.
+- 38 unit/integration checks passed (29 existing + 9 custom template checks).
+- All 10 browser scenarios passed: 9 existing scenarios and the new registration/mapping/persistence/reload/download/replacement-cancel/carrier-isolation/mobile/delete scenario.
+- Stored workbook strips original order rows, hidden-sheet values, formulas, comments and creator data. No order upload POST requests observed.
+- Export verified for original headers, sheet names, widths, row heights, styles, numeric quantity, Korean/long product names and leading-zero phone/postal-code text.
+- Static build, TypeScript and lint passed.
+- Custom templates tested with synthetic fixtures, never represented as official carrier formats. Actual carrier acceptance requires the user's contracted shipping system.
+- Supported: unencrypted .xlsx, one order per row. Merged header/data areas produce an explicit error. Non-header values, formulas and images are removed as disclosed in setup and guide.

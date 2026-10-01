@@ -23,13 +23,13 @@ export function ServiceGuide() {
             },
             {
               icon: ScanLine,
-              title: "자동 분석 · 검증",
-              body: "누락된 정보와 중복 주문을 확인하고, 상품명과 발송인을 설정하세요.",
+              title: "택배사 선택 · 항목 확인",
+              body: "롯데는 바로 사용하고, 다른 택배사는 내 양식을 등록해 항목을 연결하세요.",
             },
             {
               icon: ArrowDownToLine,
-              title: "롯데택배 파일 다운로드",
-              body: "검증된 주문을 롯데택배 양식으로 받아 송장 등록에 바로 사용하세요.",
+              title: "내 택배사 파일 다운로드",
+              body: "주문과 미리보기를 확인하고 선택한 양식으로 다운로드하세요.",
             },
           ].map((item, index) => (
             <div className="how-card" key={item.title}>

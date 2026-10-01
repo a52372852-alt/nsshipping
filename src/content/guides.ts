@@ -1,3 +1,4 @@
+import { templateGuide } from "./template-guide";
 export type GuideSection = {
   id: string;
   title: string;
@@ -14,6 +15,7 @@ export type Guide = {
   sections: GuideSection[];
 };
 export const guides: Guide[] = [
+  templateGuide,
   {
     slug: "smartstore-lotte",
     label: "스마트스토어",

@@ -18,6 +18,9 @@ export function ConversionActions({
   downloading,
   setSettings,
   download,
+  carrierLabel = "롯데택배",
+  custom = false,
+  templateReady = true,
 }: {
   sender: SenderSettings;
   rules: ProductRule[];
@@ -28,6 +31,9 @@ export function ConversionActions({
   downloading: boolean;
   setSettings: (tab: "sender" | "rules") => void;
   download: () => void;
+  carrierLabel?: string;
+  custom?: boolean;
+  templateReady?: boolean;
 }) {
   return (
     <>
@@ -66,9 +72,11 @@ export function ConversionActions({
             <h2>
               {eligible.length === 0
                 ? "출력할 주문을 확인해주세요"
-                : !sender.phone.trim() || !sender.name.trim()
-                  ? "발송인 설정을 마무리해주세요"
-                  : "롯데택배 등록 준비가 되었습니다"}
+                : !templateReady
+                  ? "택배사 양식 연결을 마무리해주세요"
+                  : !custom && (!sender.phone.trim() || !sender.name.trim())
+                    ? "발송인 설정을 마무리해주세요"
+                    : `${carrierLabel} 등록 준비가 되었습니다`}
             </h2>
             <p>
               출력 가능한 주문 <strong>{eligible.length}건</strong>
@@ -85,7 +93,9 @@ export function ConversionActions({
           </div>
         </div>
         <Button
-          disabled={busy || downloading || eligible.length === 0}
+          disabled={
+            busy || downloading || eligible.length === 0 || !templateReady
+          }
           onClick={download}
         >
           {downloading ? (
@@ -93,7 +103,7 @@ export function ConversionActions({
           ) : (
             <ArrowDownToLine size={18} />
           )}{" "}
-          {downloading ? "엑셀 생성 중…" : "롯데택배 엑셀 다운로드"}
+          {downloading ? "엑셀 생성 중…" : `${carrierLabel} 엑셀 다운로드`}
         </Button>
       </section>
     </>
