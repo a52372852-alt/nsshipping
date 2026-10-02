@@ -254,7 +254,7 @@ export default function PrivateShipping() {
                     </h3>
                     <p>
                       {group === "yellow"
-                        ? "기존 양식 · 배송메시지 앞에 ® 표시"
+                        ? "기존 양식 · 배송메시지 앞에 [R] 표시"
                         : "새 B타입 양식 · N열 수량, S열 공란"}
                     </p>
                     {count === 0 && <p>해당 주문이 없어 헤더만 출력합니다.</p>}

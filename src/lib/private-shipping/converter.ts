@@ -71,6 +71,11 @@ export function splitFilename(group: "yellow" | "plain", date = new Date()) {
     : `엔에스벨류몰_B타입 전용(지정)_${day}.xlsx`;
 }
 
+export function markDeliveryMessage(message: string): string {
+  const body = message.replace(/^(?:®|\[R\])\s*/, "");
+  return body ? `[R] ${body}` : "[R]";
+}
+
 export async function exportSplitGroup(
   rows: SplitOrder[],
   group: "yellow" | "plain",
@@ -89,9 +94,7 @@ export async function exportSplitGroup(
     return exportLotte(
       orders.map((order) => ({
         ...order,
-        deliveryMessage: order.deliveryMessage.startsWith("®")
-          ? order.deliveryMessage
-          : `®${order.deliveryMessage}`,
+        deliveryMessage: markDeliveryMessage(order.deliveryMessage),
       })),
       sender,
     );

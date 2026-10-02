@@ -6,6 +6,7 @@ import {
   exportSplitGroup,
   splitFilename,
   classifyFill,
+  markDeliveryMessage,
 } from "@/lib/private-shipping/converter";
 import { readOrders } from "@/lib/excel/reader";
 import { exportLotte, LOTTE_HEADERS } from "@/lib/excel/exporters/lotte";
@@ -20,6 +21,12 @@ const load = async (b: ArrayBuffer) => {
   return w.worksheets[0];
 };
 describe("개인용 분리 출력", () => {
+  it("배송메시지 표시를 선명하게 바꾸고 중복 표시를 방지한다", () => {
+    expect(markDeliveryMessage("문 앞에 놓아주세요")).toBe("[R] 문 앞에 놓아주세요");
+    expect(markDeliveryMessage("")).toBe("[R]");
+    expect(markDeliveryMessage("®문 앞")).toBe("[R] 문 앞");
+    expect(markDeliveryMessage("[R] 문 앞")).toBe("[R] 문 앞");
+  });
   it("실제 토스 구조에서 수령인 색상만 사용하고 일반 출력은 그대로 유지한다", async () => {
     const w = new ExcelJS.Workbook();
     await w.xlsx.readFile("samples/toss.xlsx");
@@ -67,7 +74,7 @@ describe("개인용 분리 출력", () => {
       Array.from({ length: 18 }, (_, i) => yellow.getCell(1, i + 1).text),
     ).toEqual(LOTTE_HEADERS);
     expect(yellow.getCell("O2").text).toBe(
-      "®" + result.orders[0].deliveryMessage,
+      ("[R] " + result.orders[0].deliveryMessage).trimEnd(),
     );
     expect(plain.getCell("N1").text).toBe("수량(B타입)");
     expect(plain.getCell("S1").text).toBe("수량(A타입)");
@@ -80,7 +87,7 @@ describe("개인용 분리 출력", () => {
         [
           {
             ...regular.orders[0],
-            deliveryMessage: "®" + regular.orders[0].deliveryMessage,
+            deliveryMessage: ("[R] " + regular.orders[0].deliveryMessage).trimEnd(),
           },
         ],
         sender,

@@ -68,7 +68,7 @@ test("개인용 두 다운로드와 전화번호 자동 저장·재방문·새 �
     expect(s.rowCount).toBe(counts[index] + 1);
     for (let r = 2; r <= s.rowCount; r++) {
       expect(s.getCell(r, 3).text).toBe("02-0000-0000");
-      if (index === 0) expect(s.getCell(r, 15).text.startsWith("®")).toBe(true);
+      if (index === 0) expect(s.getCell(r, 15).text.startsWith("[R]")).toBe(true);
       else expect(s.getCell(r, 19).value).toBeNull();
     }
   }
