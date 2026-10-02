@@ -10,6 +10,7 @@ export async function readOrders(
   fileName: string,
   fileId: string,
   decrypt: WorkbookDecryptor = decryptWorkbook,
+  inspectWorkbook?: (workbook: ExcelJS.Workbook) => void,
 ) {
   if (!/\.xlsx$/i.test(fileName))
     throw new ExcelImportError(
@@ -65,6 +66,7 @@ export async function readOrders(
   const orders = matches.flatMap((match) =>
     parseSheet(match, fileId, fileName),
   );
+  inspectWorkbook?.(workbook);
   const ignored = workbook.worksheets.filter(
     (sheet) => !matches.some((m) => m.sheet.id === sheet.id),
   );
