@@ -516,7 +516,28 @@ export default function ShippingApp() {
             </Link>
           ))}
         </nav>
-        <span>© {new Date().getFullYear()} NS Shipping</span>
+        <span>
+          © {new Date().getFullYear()} NS Shipping
+          <Link
+            href="/my-shipping"
+            prefetch={false}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            aria-label="내 롯데택배 분리 출력 (새 탭)"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 24,
+              height: 24,
+              marginLeft: 6,
+              color: "#94a3b8",
+              textDecoration: "none",
+            }}
+          >
+            <span aria-hidden="true">·</span>
+          </Link>
+        </span>
       </footer>
       {settings && (
         <SettingsDialog
