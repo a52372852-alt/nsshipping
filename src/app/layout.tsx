@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { FastReload } from "@/components/fast-reload";
 export const metadata: Metadata = {
   metadataBase: new URL("https://nshome.life"),
   title: {
@@ -17,7 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        {children}
+        <FastReload />
+      </body>
     </html>
   );
 }

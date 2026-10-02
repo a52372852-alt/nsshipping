@@ -13,7 +13,8 @@
     "format": "prettier --write src tests scripts/*.mjs *.ts *.mjs *.json README.md docs/*.md samples/README.md",
     "build:crypto": "mkdir -p public/vendor && browserify scripts/crypto-worker.cjs -o public/vendor/crypto-worker.js",
     "prebuild": "npm run build:crypto",
-    "predev": "npm run build:crypto"
+    "predev": "npm run build:crypto",
+    "postbuild": "node scripts/build-shipping-cache.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
