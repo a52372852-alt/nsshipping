@@ -29,7 +29,8 @@ const files = (await list(path.join(out, "_next/static")))
   .sort();
 const assets = await Promise.all(
   files.map(async (file) => ({
-    url: "/" + path.relative(out, file).split(path.sep).join("/"),
+    // Match the encoded request paths used by browsers and the production host.
+    url: "/" + path.relative(out, file).split(path.sep).map(encodeURIComponent).join("/"),
     sha256: hash(await readFile(file)),
   })),
 );

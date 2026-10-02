@@ -12,6 +12,8 @@ let version=initial, delay=0, broken=false;
 const server=createServer(async(req,res)=>{
  try {
   const url=new URL(req.url,'http://localhost');
+  // Production canonicalizes literal brackets in dynamic-route chunk paths.
+  if(/[\[\]]/.test(url.pathname)){res.writeHead(308,{Location:url.pathname.replaceAll('[','%5B').replaceAll(']','%5D')});res.end();return;}
   const relative=url.pathname==='/'?'index.html':url.pathname==='/my-shipping'?'my-shipping.html':decodeURIComponent(url.pathname.slice(1));
   const file=path.resolve(root,relative);if(!file.startsWith(root+path.sep))throw Error('Invalid path');
   let data=await readFile(file);
