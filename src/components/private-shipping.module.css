@@ -1,0 +1,42 @@
+.header.header {
+  height: auto;
+  min-height: 88px;
+}
+
+.headerInner.headerInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  min-height: 88px;
+  gap: 16px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.titleBox {
+  grid-column: 2;
+  padding: 13px 28px;
+  border: 1px solid #bfd0ff;
+  border-radius: 14px;
+  background: #edf3ff;
+  color: #234ed8;
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 1.4;
+  text-align: center;
+  box-shadow: 0 3px 12px #335fff12;
+}
+
+@media (max-width: 640px) {
+  .headerInner.headerInner {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .titleBox {
+    grid-column: 1;
+    justify-self: center;
+    max-width: 100%;
+    padding: 12px 22px;
+    font-size: 18px;
+  }
+}

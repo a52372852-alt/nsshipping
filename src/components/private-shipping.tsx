@@ -13,6 +13,7 @@ import {
   savePrivateSender,
 } from "@/lib/private-shipping/settings";
 import type { SplitOrder } from "@/lib/private-shipping/converter";
+import styles from "./private-shipping.module.css";
 
 export default function PrivateShipping() {
   const [rows, setRows] = useState<SplitOrder[]>([]);
@@ -124,12 +125,12 @@ export default function PrivateShipping() {
   }
   return (
     <>
-      <header className="site-header">
-        <div className="header-inner">
+      <header className={`site-header ${styles.header}`}>
+        <div className={`header-inner ${styles.headerInner}`}>
           <Link href="/" className="brand">
             NS Shipping
           </Link>
-          <strong>내 롯데택배 분리 출력</strong>
+          <strong className={styles.titleBox}>내 롯데택배 분리 출력</strong>
         </div>
       </header>
       <main
