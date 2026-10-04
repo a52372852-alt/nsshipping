@@ -86,11 +86,6 @@ export default function PrivateShipping() {
     }
   }
   const issues = rows.flatMap((r) => [
-    ...(r.group === "unknown"
-      ? [
-          `${r.order.sourceFileName} ${r.order.sourceRow}행: 수령인 셀의 색상을 인식하지 못했습니다. 지정송하인 주문은 표준 주황색으로 표시해주세요.`,
-        ]
-      : []),
     ...validateOrder(r.order)
       .filter((i) => i.level === "error")
       .map((i) => `${r.order.sourceRow}행: ${i.message}`),
@@ -143,7 +138,7 @@ export default function PrivateShipping() {
       >
         <h1>주문 파일 하나, 롯데택배 엑셀 두 개</h1>
         <p style={{ margin: "16px 0 24px" }}>
-          수령인 이름이 표준 주황색이면 지정송하인, 기본 배경이면 지정 양식으로
+          수령인 이름이 표준 주황색이면 지정송하인, 그 외에는 지정 양식으로
           분리합니다.
         </p>
         <aside className="privacy-notice">
@@ -249,7 +244,7 @@ export default function PrivateShipping() {
                     <h3>
                       {group === "orange"
                         ? "주황색 · 지정송하인"
-                        : "기본 배경 · 지정"}{" "}
+                        : "그 외 · 지정"}{" "}
                       {count}건
                     </h3>
                     <p>
@@ -300,13 +295,7 @@ export default function PrivateShipping() {
                       <td>{order.receiverName}</td>
                       <td>{order.productName}</td>
                       <td>{order.quantity}</td>
-                      <td>
-                        {group === "orange"
-                          ? "지정송하인"
-                          : group === "plain"
-                            ? "지정"
-                            : "색상 확인 필요"}
-                      </td>
+                      <td>{group === "orange" ? "지정송하인" : "지정"}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -8,7 +8,7 @@ import aSchema from "@/lib/excel/exporters/template-schema.json";
 import bSchema from "./b-template-schema.json";
 import type { NormalizedOrder, SenderSettings } from "@/types/order";
 
-export type SplitGroup = "orange" | "plain" | "unknown";
+export type SplitGroup = "orange" | "plain";
 export interface SplitOrder {
   order: NormalizedOrder;
   group: SplitGroup;
@@ -17,14 +17,13 @@ export interface SplitOrder {
 export function classifyFill(fill: ExcelJS.Fill | undefined): SplitGroup {
   if (!fill || (fill.type === "pattern" && fill.pattern === "none"))
     return "plain";
-  if (fill.type !== "pattern" || fill.pattern !== "solid") return "unknown";
+  if (fill.type !== "pattern" || fill.pattern !== "solid") return "plain";
   const color = fill.fgColor as
     (Partial<ExcelJS.Color> & { indexed?: number }) | undefined;
   const rgb = color?.argb?.toUpperCase().slice(-6);
   if (rgb === "FFC000") return "orange";
-  // White and the default neutral backgrounds observed in the Toss export.
-  if (["FFFFFF", "F8F9FA", "F3F3F3"].includes(rgb ?? "")) return "plain";
-  return "unknown";
+  // Only explicitly marked standard orange selects the designated sender.
+  return "plain";
 }
 
 export async function readSplitOrders(
@@ -39,17 +38,9 @@ export async function readSplitOrders(
         ?.map((h) => match.headers.get(normalizeHeader(h)))
         .find(Boolean);
       if (!col) continue;
-      // Conditional formatting cannot be inferred from the cell's base fill.
-      // Require an explicit fill when the sheet has conditional rules.
-      const conditional =
-        ((match.sheet as unknown as { conditionalFormattings?: unknown[] })
-          .conditionalFormattings?.length ?? 0) > 0;
       for (let r = match.headerRow + 1; r <= match.sheet.rowCount; r++) {
         const cell = match.sheet.getCell(r, col);
-        marks.set(
-          `${match.sheet.name}:${r}`,
-          conditional || cell.isMerged ? "unknown" : classifyFill(cell.fill),
-        );
+        marks.set(`${match.sheet.name}:${r}`, classifyFill(cell.fill));
       }
     }
   });
@@ -57,7 +48,7 @@ export async function readSplitOrders(
     ...result,
     split: result.orders.map((order): SplitOrder => ({
       order,
-      group: marks.get(`${order.sourceSheet}:${order.sourceRow}`) ?? "unknown",
+      group: marks.get(`${order.sourceSheet}:${order.sourceRow}`) ?? "plain",
     })),
   };
 }
@@ -81,10 +72,6 @@ export async function exportSplitGroup(
   group: "orange" | "plain",
   sender: SenderSettings,
 ) {
-  if (rows.some((r) => r.group === "unknown"))
-    throw new Error(
-      "수령인 셀의 색상을 인식하지 못했습니다. 지정송하인 주문은 표준 주황색으로 표시해주세요.",
-    );
   if (rows.some((r) => validateOrder(r.order).some((i) => i.level === "error")))
     throw new Error("오류 주문이 있습니다. 원본을 수정한 뒤 다시 올려주세요.");
   if (!sender.name.trim() || !sender.phone.trim())

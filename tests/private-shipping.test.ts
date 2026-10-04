@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import ExcelJS from "exceljs";
-import { readFile } from "node:fs/promises";
 import {
   readSplitOrders,
   exportSplitGroup,
@@ -39,7 +38,7 @@ describe("개인용 분리 출력", () => {
         pattern: "solid",
         fgColor: { argb: "FFFFFF00" },
       }),
-    ).toBe("unknown");
+    ).toBe("plain");
   });
   it("배송메시지 표시를 선명하게 바꾸고 중복 표시를 방지한다", () => {
     expect(markDeliveryMessage("문 앞에 놓아주세요")).toBe(
@@ -125,26 +124,14 @@ describe("개인용 분리 출력", () => {
       "엔에스벨류몰_B-type[지정송하인]_20261002.xlsx",
     );
   });
-  it("미확인 색상은 자동 배정하지 않고 주문이 없는 쪽은 헤더만 만든다", async () => {
+  it("주황색 외에는 지정으로 분류하고 주문이 없는 쪽은 헤더만 만든다", async () => {
     expect(
       classifyFill({
         type: "pattern",
         pattern: "solid",
         fgColor: { argb: "FFFF0000" },
       }),
-    ).toBe("unknown");
-    const result = await readSplitOrders(
-      new Uint8Array(await readFile("samples/toss.xlsx")).buffer,
-      "toss.xlsx",
-      "empty",
-    );
-    await expect(
-      exportSplitGroup(
-        [{ ...result.split[0], group: "unknown" }],
-        "orange",
-        sender,
-      ),
-    ).rejects.toThrow("색상");
+    ).toBe("plain");
     for (const group of ["orange", "plain"] as const) {
       const s = await load(await exportSplitGroup([], group, sender));
       expect(s.rowCount).toBe(1);
