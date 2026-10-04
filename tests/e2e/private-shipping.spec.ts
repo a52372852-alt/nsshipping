@@ -32,7 +32,7 @@ test("개인용 두 다운로드와 전화번호 자동 저장·재방문·새 �
     w.worksheets[0].getCell(4, col).fill = {
       type: "pattern",
       pattern: "solid",
-      fgColor: { argb: "FFFFFF00" },
+      fgColor: { argb: "FFFFC000" },
     };
     w.worksheets[0].getCell(5, col).style = structuredClone(
       w.worksheets[0].getCell(5, col).style,
@@ -46,7 +46,9 @@ test("개인용 두 다운로드와 전화번호 자동 저장·재방문·새 �
     };
   }
   await page.getByLabel("주문 엑셀 파일 선택").setInputFiles(upload);
-  const counts = process.env.PRIVATE_ORDER_SAMPLE ? [8, 1] : [1, 1];
+  const counts = process.env.PRIVATE_ORDER_COUNTS
+    ? process.env.PRIVATE_ORDER_COUNTS.split(",").map(Number)
+    : [1, 1];
   await expect(page.locator("tbody tr")).toHaveCount(counts[0] + counts[1]);
   for (const [index, button] of [
     "지정송하인 엑셀 다운로드",
@@ -68,7 +70,8 @@ test("개인용 두 다운로드와 전화번호 자동 저장·재방문·새 �
     expect(s.rowCount).toBe(counts[index] + 1);
     for (let r = 2; r <= s.rowCount; r++) {
       expect(s.getCell(r, 3).text).toBe("02-0000-0000");
-      if (index === 0) expect(s.getCell(r, 15).text.startsWith("[R]")).toBe(true);
+      if (index === 0)
+        expect(s.getCell(r, 15).text.startsWith("[R]")).toBe(true);
       else expect(s.getCell(r, 19).value).toBeNull();
     }
   }

@@ -8,7 +8,7 @@ import aSchema from "@/lib/excel/exporters/template-schema.json";
 import bSchema from "./b-template-schema.json";
 import type { NormalizedOrder, SenderSettings } from "@/types/order";
 
-export type SplitGroup = "yellow" | "plain" | "unknown";
+export type SplitGroup = "orange" | "plain" | "unknown";
 export interface SplitOrder {
   order: NormalizedOrder;
   group: SplitGroup;
@@ -21,9 +21,9 @@ export function classifyFill(fill: ExcelJS.Fill | undefined): SplitGroup {
   const color = fill.fgColor as
     (Partial<ExcelJS.Color> & { indexed?: number }) | undefined;
   const rgb = color?.argb?.toUpperCase().slice(-6);
-  if (rgb === "FFFF00" || [5, 13].includes(color?.indexed ?? -1))
-    return "yellow";
-  if (rgb === "FFFFFF") return "plain";
+  if (rgb === "FFC000") return "orange";
+  // White and the default neutral backgrounds observed in the Toss export.
+  if (["FFFFFF", "F8F9FA", "F3F3F3"].includes(rgb ?? "")) return "plain";
   return "unknown";
 }
 
@@ -62,11 +62,11 @@ export async function readSplitOrders(
   };
 }
 
-export function splitFilename(group: "yellow" | "plain", date = new Date()) {
+export function splitFilename(group: "orange" | "plain", date = new Date()) {
   const day = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" })
     .format(date)
     .replaceAll("-", "");
-  return group === "yellow"
+  return group === "orange"
     ? `엔에스벨류몰_B-type[지정송하인]_${day}.xlsx`
     : `엔에스벨류몰_B타입 전용(지정)_${day}.xlsx`;
 }
@@ -78,19 +78,19 @@ export function markDeliveryMessage(message: string): string {
 
 export async function exportSplitGroup(
   rows: SplitOrder[],
-  group: "yellow" | "plain",
+  group: "orange" | "plain",
   sender: SenderSettings,
 ) {
   if (rows.some((r) => r.group === "unknown"))
     throw new Error(
-      "수령인 셀의 색상을 확인해주세요. 노란색 또는 채우기 없음으로 지정해주세요.",
+      "수령인 셀의 색상을 인식하지 못했습니다. 지정송하인 주문은 표준 주황색으로 표시해주세요.",
     );
   if (rows.some((r) => validateOrder(r.order).some((i) => i.level === "error")))
     throw new Error("오류 주문이 있습니다. 원본을 수정한 뒤 다시 올려주세요.");
   if (!sender.name.trim() || !sender.phone.trim())
     throw new Error("발송인 이름과 전화번호를 입력해주세요.");
   const orders = rows.filter((r) => r.group === group).map((r) => r.order);
-  if (group === "yellow" && orders.length)
+  if (group === "orange" && orders.length)
     return exportLotte(
       orders.map((order) => ({
         ...order,
@@ -98,7 +98,7 @@ export async function exportSplitGroup(
       })),
       sender,
     );
-  const schema = group === "yellow" ? aSchema : bSchema;
+  const schema = group === "orange" ? aSchema : bSchema;
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "NS Shipping";
   const sheet = workbook.addWorksheet(schema.sheetName);

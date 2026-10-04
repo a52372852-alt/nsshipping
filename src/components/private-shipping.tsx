@@ -88,14 +88,14 @@ export default function PrivateShipping() {
   const issues = rows.flatMap((r) => [
     ...(r.group === "unknown"
       ? [
-          `${r.order.sourceFileName} ${r.order.sourceRow}행: 수령인 셀을 노란색 또는 채우기 없음으로 지정해주세요.`,
+          `${r.order.sourceFileName} ${r.order.sourceRow}행: 수령인 셀의 색상을 인식하지 못했습니다. 지정송하인 주문은 표준 주황색으로 표시해주세요.`,
         ]
       : []),
     ...validateOrder(r.order)
       .filter((i) => i.level === "error")
       .map((i) => `${r.order.sourceRow}행: ${i.message}`),
   ]);
-  async function download(group: "yellow" | "plain") {
+  async function download(group: "orange" | "plain") {
     if (working.current) return;
     working.current = true;
     setBusy(true);
@@ -118,7 +118,7 @@ export default function PrivateShipping() {
       setTimeout(() => URL.revokeObjectURL(url), 60000);
       setDownloaded((prev) => [...new Set([...prev, group])]);
       setNotice(
-        `${group === "yellow" ? "지정송하인" : "지정"} 파일을 다운로드했습니다.`,
+        `${group === "orange" ? "지정송하인" : "지정"} 파일을 다운로드했습니다.`,
       );
     } catch (e) {
       setNotice(e instanceof Error ? e.message : "다운로드하지 못했습니다.");
@@ -143,7 +143,7 @@ export default function PrivateShipping() {
       >
         <h1>주문 파일 하나, 롯데택배 엑셀 두 개</h1>
         <p style={{ margin: "16px 0 24px" }}>
-          수령인 이름이 노란색이면 지정송하인, 색상이 없으면 지정 양식으로
+          수령인 이름이 표준 주황색이면 지정송하인, 기본 배경이면 지정 양식으로
           분리합니다.
         </p>
         <aside className="privacy-notice">
@@ -197,7 +197,7 @@ export default function PrivateShipping() {
         <section style={{ margin: "28px 0" }}>
           <h2>쇼핑몰 원본 주문 파일</h2>
           <p>
-            다운로드한 롯데 결과 파일이 아닌, 노란색으로 표시한
+            다운로드한 롯데 결과 파일이 아닌, 주황색으로 표시한
             쿠팡·스마트스토어·토스 주문 파일을 올려주세요.
           </p>
           <UploadZone
@@ -238,7 +238,7 @@ export default function PrivateShipping() {
               </Button>
             </div>
             <div className="carrier-options" style={{ margin: "24px 0" }}>
-              {(["yellow", "plain"] as const).map((group) => {
+              {(["orange", "plain"] as const).map((group) => {
                 const count = rows.filter((r) => r.group === group).length;
                 return (
                   <section
@@ -247,13 +247,13 @@ export default function PrivateShipping() {
                     style={{ margin: 0 }}
                   >
                     <h3>
-                      {group === "yellow"
-                        ? "노란색 · 지정송하인"
-                        : "색상 없음 · 지정"}{" "}
+                      {group === "orange"
+                        ? "주황색 · 지정송하인"
+                        : "기본 배경 · 지정"}{" "}
                       {count}건
                     </h3>
                     <p>
-                      {group === "yellow"
+                      {group === "orange"
                         ? "기존 양식 · 배송메시지 앞에 [R] 표시"
                         : "새 B타입 양식 · N열 수량, S열 공란"}
                     </p>
@@ -267,7 +267,7 @@ export default function PrivateShipping() {
                       }
                       onClick={() => download(group)}
                     >
-                      {group === "yellow"
+                      {group === "orange"
                         ? "지정송하인 엑셀 다운로드"
                         : "지정 엑셀 다운로드"}
                     </Button>
@@ -301,7 +301,7 @@ export default function PrivateShipping() {
                       <td>{order.productName}</td>
                       <td>{order.quantity}</td>
                       <td>
-                        {group === "yellow"
+                        {group === "orange"
                           ? "지정송하인"
                           : group === "plain"
                             ? "지정"
