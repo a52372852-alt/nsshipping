@@ -1,5 +1,16 @@
 # NS Shipping 배포
 
+## 최신 배포
+
+- 2026-10-08 버전 15 배포 성공: 내 롯데택배 분리 출력에서 토스 주문에 한해 L2↓와 M2↓ 데이터 교환. L열은 옵션명, M열은 원래 상품명. 헤더·주소 열·다른 쇼핑몰 데이터 유지.
+- 소스 커밋: afe3f1d0ead3c19b23e003c3d409a3c429eb3099
+- 배포 ID: appgdep_6ac668775bfc819198ab1a2afed7ddd4
+- Sites 상태: succeeded. 공개 접근 및 기존 도메인 유지.
+- 검증: 로컬 테스트 47개 통과, 배포용 Next.js 정적 빌드 및 TypeScript 검사 통과.
+- 배포 체크아웃: /private/tmp/nshome-toss-deploy-20261008
+
+## 이전 기록
+
 - Site ID: appgprj_6abc9a35ea1081918215ea3eb288175c
 - 기본 주소: https://nshome-shipping.a52372852.chatgpt.site
 - 도메인: nshome.life

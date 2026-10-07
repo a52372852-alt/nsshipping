@@ -85,6 +85,10 @@ describe("개인용 분리 출력", () => {
     expect(result.split.map((r) => r.group)).toEqual(["orange", "plain"]);
     const regular = await readOrders(data, "toss.xlsx", "test");
     expect(result.orders).toEqual(regular.orders);
+    result.split.forEach(({ order }, i) => {
+      expect(order.productName).toBe(regular.orders[i].productName);
+      expect(order.productName).toBe(s.getCell(order.sourceRow, 10).text);
+    });
     const orange = await load(
       await exportSplitGroup(result.split, "orange", sender),
     );
@@ -101,13 +105,21 @@ describe("개인용 분리 출력", () => {
     expect(plain.getCell("S1").text).toBe("수량(A타입)");
     expect(plain.getCell("N2").value).toBe(result.orders[1].quantity);
     expect(plain.getCell("S2").value).toBeNull();
+    expect(orange.getCell("L2").text).toBe(regular.orders[0].optionName);
+    expect(plain.getCell("L2").text).toBe(regular.orders[1].optionName);
+    expect(plain.getCell("K1").text).toBe("주소");
+    expect(plain.getCell("L1").text).toBe("상품명1");
+    expect(plain.getCell("K2").text).toBe(regular.orders[1].address);
     const old = await load(await exportLotte(regular.orders, sender));
+    expect(old.getCell("L2").text).toBe(regular.orders[0].productName);
     expect(old.getCell("O2").text).toBe(regular.orders[0].deliveryMessage);
     const expected = await load(
       await exportLotte(
         [
           {
             ...regular.orders[0],
+            productName: regular.orders[0].optionName,
+            optionName: regular.orders[0].productName,
             deliveryMessage: (
               "[R] " + regular.orders[0].deliveryMessage
             ).trimEnd(),
@@ -123,6 +135,54 @@ describe("개인용 분리 출력", () => {
     expect(splitFilename("orange", new Date("2026-10-02T00:00:00Z"))).toBe(
       "엔에스벨류몰_B-type[지정송하인]_20261002.xlsx",
     );
+  });
+  it("토스 K열이 비어 있으면 상품명으로 대체하지 않고 출력 오류를 알린다", async () => {
+    const w = new ExcelJS.Workbook();
+    await w.xlsx.readFile("samples/toss.xlsx");
+    const sheet = w.worksheets[0];
+    sheet.getRow(2).eachCell((cell, column) => {
+      if (cell.text === "옵션명") {
+        sheet.getCell(4, column).value = "";
+        sheet.getCell(5, column).value = "   ";
+      }
+    });
+    const result = await readSplitOrders(await bytes(w), "toss.xlsx", "test");
+    result.split.forEach(({ order }) => {
+      expect(order.optionName).toBe("");
+    });
+    await expect(exportSplitGroup(result.split, "plain", sender)).rejects.toThrow("오류 주문");
+  });
+  it.each(["orange", "plain"] as const)("%s 출력 L·M 데이터만 토스 옵션명·원래 상품명으로 교환한다", async (group) => {
+    const w = new ExcelJS.Workbook();
+    await w.xlsx.readFile("samples/toss.xlsx");
+    const result = await readSplitOrders(await bytes(w), "toss.xlsx", "test");
+    const rows = result.split.map(({ order }) => ({
+      group,
+      order,
+    }));
+    const sheet = await load(await exportSplitGroup(rows, group, sender));
+    expect(sheet.getCell("L1").text).toBe("상품명1");
+    expect(sheet.getCell("M1").text).toBe("상품상세1");
+    rows.forEach(({ order }, i) => {
+      expect(sheet.getCell(i + 2, 12).text).toBe(w.worksheets[0].getCell(order.sourceRow, 11).text);
+      expect(sheet.getCell(i + 2, 13).text).toBe(w.worksheets[0].getCell(order.sourceRow, 10).text);
+      expect(sheet.getCell(i + 2, 11).text).toBe(order.address);
+    });
+  });
+  it.each(["coupang", "smartstore"])("%s의 상품명은 그대로 유지한다", async (platform) => {
+    const w = new ExcelJS.Workbook();
+    await w.xlsx.readFile(`samples/${platform}.xlsx`);
+    const result = await readSplitOrders(await bytes(w), `${platform}.xlsx`, "test");
+    expect(result.split.map(({ order }) => order)).toEqual(result.orders);
+    for (const group of ["orange", "plain"] as const) {
+      const sheet = await load(await exportSplitGroup(
+        result.split.map((row) => ({ ...row, group })), group, sender,
+      ));
+      result.orders.forEach((order, i) => {
+        expect(sheet.getCell(i + 2, 12).text).toBe(order.productName);
+        expect(sheet.getCell(i + 2, 13).text).toBe(order.optionName);
+      });
+    }
   });
   it("주황색 외에는 지정으로 분류하고 주문이 없는 쪽은 헤더만 만든다", async () => {
     expect(
