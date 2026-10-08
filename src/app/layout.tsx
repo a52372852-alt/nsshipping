@@ -1,6 +1,11 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import type { Metadata } from "next";
 import "./globals.css";
 import { FastReload } from "@/components/fast-reload";
+const releaseVersion = readFileSync(join(process.cwd(), "VERSION"), "utf8").trim();
+const releaseDate = readFileSync(join(process.cwd(), "RELEASE_DATE"), "utf8").trim();
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://nshome.life"),
   title: {
@@ -20,6 +25,9 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         {children}
+        <div className="site-version" aria-label="사이트 버전">
+          v{releaseVersion} · {releaseDate.replaceAll("-", ".")}
+        </div>
         <FastReload />
       </body>
     </html>

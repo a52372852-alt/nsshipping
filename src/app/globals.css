@@ -2463,3 +2463,11 @@ footer > span:last-child {
   color: #1d4ed8;
   text-decoration: underline;
 }
+
+.site-version {
+  padding: 12px 20px 24px;
+  text-align: center;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
