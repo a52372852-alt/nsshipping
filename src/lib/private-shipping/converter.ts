@@ -81,6 +81,7 @@ export async function exportSplitGroup(
     return exportLotte(
       orders.map((order) => ({
         ...order,
+        productName: "Blanket",
         deliveryMessage: markDeliveryMessage(order.deliveryMessage),
       })),
       sender,

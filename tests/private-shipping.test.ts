@@ -108,6 +108,7 @@ describe("개인용 분리 출력", () => {
         [
           {
             ...regular.orders[0],
+            productName: "Blanket",
             deliveryMessage: (
               "[R] " + regular.orders[0].deliveryMessage
             ).trimEnd(),
@@ -123,6 +124,29 @@ describe("개인용 분리 출력", () => {
     expect(splitFilename("orange", new Date("2026-10-02T00:00:00Z"))).toBe(
       "엔에스벨류몰_B-type[지정송하인]_20261002.xlsx",
     );
+  });
+  it.each(["toss", "coupang", "smartstore"])("%s 지정송하인의 모든 L열은 Blanket이고 다른 출력 항목과 원본은 유지한다", async (platform) => {
+    const w = new ExcelJS.Workbook();
+    await w.xlsx.readFile(`samples/${platform}.xlsx`);
+    const result = await readSplitOrders(await bytes(w), `${platform}.xlsx`, "test");
+    const original = structuredClone(result.orders);
+    for (const group of ["orange", "plain"] as const) {
+      const sheet = await load(await exportSplitGroup(
+        result.split.map((row) => ({ ...row, group })), group, sender,
+      ));
+      expect(sheet.getCell("L1").text).toBe("상품명1");
+      result.orders.forEach((order, i) => {
+        expect(sheet.getCell(i + 2, 12).text).toBe(group === "orange" ? "Blanket" : order.productName);
+        expect(sheet.getCell(i + 2, 13).text).toBe(order.optionName);
+        expect(sheet.getCell(i + 2, 11).text).toBe(order.address);
+        expect(sheet.getCell(i + 2, 14).value).toBe(order.quantity);
+      });
+    }
+    const regular = await load(await exportLotte(result.orders, sender));
+    result.orders.forEach((order, i) => {
+      expect(regular.getCell(i + 2, 12).text).toBe(order.productName);
+    });
+    expect(result.orders).toEqual(original);
   });
   it("주황색 외에는 지정으로 분류하고 주문이 없는 쪽은 헤더만 만든다", async () => {
     expect(
