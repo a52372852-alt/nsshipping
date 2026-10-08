@@ -7,3 +7,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## 버전 및 커밋 표시
+
+- 사용자가 커밋에서 버전을 알아볼 수 있도록 제목을 `[v번호] 한글 변경 요약` 형식으로 작성한다.
+- 배포 버전은 Sites 버전과 맞추며 `VERSION`, `CHANGELOG.md`를 함께 갱신한다. 복원 배포도 새 번호를 사용하고 복원 기준 버전을 명시한다.
+- 배포 결과와 소스 커밋은 `docs/deployment.md`에 기록한다.

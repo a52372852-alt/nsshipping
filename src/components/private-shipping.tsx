@@ -67,10 +67,7 @@ export default function PrivateShipping() {
         next.push(
           ...result.split.map((r) => ({
             ...r,
-            order:
-              r.order.platform === "toss"
-                ? r.order
-                : applyProductRules(r.order, rules),
+            order: applyProductRules(r.order, rules),
           })),
         );
       }

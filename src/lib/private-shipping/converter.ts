@@ -14,13 +14,6 @@ export interface SplitOrder {
   group: SplitGroup;
 }
 
-function useTossItemName(order: NormalizedOrder): NormalizedOrder {
-  // Swap only Toss data fields for output columns L and M; keep headers fixed.
-  return order.platform === "toss"
-    ? { ...order, productName: order.optionName, optionName: order.productName }
-    : order;
-}
-
 export function classifyFill(fill: ExcelJS.Fill | undefined): SplitGroup {
   if (!fill || (fill.type === "pattern" && fill.pattern === "none"))
     return "plain";
@@ -79,7 +72,6 @@ export async function exportSplitGroup(
   group: "orange" | "plain",
   sender: SenderSettings,
 ) {
-  rows = rows.map((row) => ({ ...row, order: useTossItemName(row.order) }));
   if (rows.some((r) => validateOrder(r.order).some((i) => i.level === "error")))
     throw new Error("오류 주문이 있습니다. 원본을 수정한 뒤 다시 올려주세요.");
   if (!sender.name.trim() || !sender.phone.trim())
