@@ -136,8 +136,8 @@ describe("개인용 분리 출력", () => {
       ));
       expect(sheet.getCell("L1").text).toBe("상품명1");
       result.orders.forEach((order, i) => {
-        expect(sheet.getCell(i + 2, 12).text).toBe(group === "orange" ? "Blanket" : order.productName);
-        expect(sheet.getCell(i + 2, 13).text).toBe(order.optionName);
+        expect(sheet.getCell(i + 2, 12).text).toBe(group === "orange" ? "Blanket" : order.optionName);
+        expect(sheet.getCell(i + 2, 13).text).toBe(group === "orange" ? order.optionName : order.productName);
         expect(sheet.getCell(i + 2, 11).text).toBe(order.address);
         expect(sheet.getCell(i + 2, 14).value).toBe(order.quantity);
       });
