@@ -99,7 +99,7 @@ describe("개인용 분리 출력", () => {
     );
     expect(plain.getCell("N1").text).toBe("수량(B타입)");
     expect(plain.getCell("S1").text).toBe("수량(A타입)");
-    expect(plain.getCell("N2").value).toBe(result.orders[1].quantity);
+    expect(plain.getCell("N2").value).toBe(1);
     expect(plain.getCell("S2").value).toBeNull();
     const old = await load(await exportLotte(regular.orders, sender));
     expect(old.getCell("O2").text).toBe(regular.orders[0].deliveryMessage);
@@ -136,7 +136,7 @@ describe("개인용 분리 출력", () => {
       ));
       expect(sheet.getCell("L1").text).toBe("상품명1");
       result.orders.forEach((order, i) => {
-        const singleParcel = group === "plain" && platform === "coupang";
+        const singleParcel = group === "plain";
         expect(sheet.getCell(i + 2, 12).text).toBe(group === "orange" ? "Blanket" : order.optionName);
         expect(sheet.getCell(i + 2, 13).text).toBe(group === "orange" ? order.optionName : singleParcel ? `${order.productName}-${order.quantity}개` : order.productName);
         expect(sheet.getCell(i + 2, 11).text).toBe(order.address);
@@ -149,10 +149,10 @@ describe("개인용 분리 출력", () => {
     });
     expect(result.orders).toEqual(original);
   });
-  it.each([1, 2, 3, 4, 12])("쿠팡 지정 %i개 주문은 한 건으로 출력하고 상품상세에 실제 수량을 표시한다", async (quantity) => {
+  it.each(["coupang", "smartstore", "toss"].flatMap((platform) => [1, 2, 3, 4, 12].map((quantity) => [platform, quantity] as const)))("%s 지정 %i개 주문은 한 건으로 출력하고 상품상세에 실제 수량을 표시한다", async (platform, quantity) => {
     const w = new ExcelJS.Workbook();
-    await w.xlsx.readFile("samples/coupang.xlsx");
-    const result = await readSplitOrders(await bytes(w), "coupang.xlsx", "test");
+    await w.xlsx.readFile(`samples/${platform}.xlsx`);
+    const result = await readSplitOrders(await bytes(w), `${platform}.xlsx`, "test");
     const order = { ...result.orders[0], productName: "코지 블루 무릎담요(100x150)", quantity };
     const original = structuredClone(order);
     const rows = [{ order, group: "plain" as const }];
