@@ -99,6 +99,7 @@ export async function exportSplitGroup(
     sheet.getCell(1, i + 1).style = structuredClone(s) as ExcelJS.Style;
   });
   for (const order of orders) {
+    const singleParcel = group === "plain" && order.platform === "coupang";
     const row = sheet.addRow([
       order.orderId,
       sender.name.trim(),
@@ -112,8 +113,8 @@ export async function exportSplitGroup(
       order.postalCode,
       order.address,
       order.optionName,
-      order.productName,
-      order.quantity,
+      singleParcel ? `${order.productName}-${order.quantity}개` : order.productName,
+      singleParcel ? 1 : order.quantity,
       order.deliveryMessage,
       sender.freight,
       "",
