@@ -98,10 +98,20 @@ export async function exportSplitGroup(
   schema.headerStyles.forEach((s, i) => {
     sheet.getCell(1, i + 1).style = structuredClone(s) as ExcelJS.Style;
   });
+  const bundles = new Map<string, NormalizedOrder[]>();
   for (const order of orders) {
+    const key = order.address.trim().replace(/\s+/g, " ");
+    const bundle = bundles.get(key);
+    if (bundle) bundle.push(order);
+    else bundles.set(key, [order]);
+  }
+  for (const bundle of bundles.values()) {
+    const order = bundle[0];
+    const joinUnique = (field: "orderId" | "deliveryMessage") =>
+      [...new Set(bundle.map((item) => item[field]).filter(Boolean))].join(",");
     const singleParcel = group === "plain";
     const row = sheet.addRow([
-      order.orderId,
+      joinUnique("orderId"),
       sender.name.trim(),
       sender.phone.trim(),
       sender.phone2.trim(),
@@ -112,10 +122,10 @@ export async function exportSplitGroup(
       order.receiverPhone2,
       order.postalCode,
       order.address,
-      singleParcel ? `${order.optionName}-${order.quantity}개` : order.optionName,
-      singleParcel ? `${order.productName}-${order.quantity}개` : order.productName,
+      singleParcel ? bundle.map((item) => `${item.optionName}-${item.quantity}개`).join(",") : order.optionName,
+      singleParcel ? bundle.map((item) => `${item.productName}-${item.quantity}개`).join(",") : order.productName,
       singleParcel ? 1 : order.quantity,
-      order.deliveryMessage,
+      joinUnique("deliveryMessage"),
       sender.freight,
       "",
       "",

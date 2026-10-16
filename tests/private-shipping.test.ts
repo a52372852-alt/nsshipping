@@ -168,6 +168,40 @@ describe("개인용 분리 출력", () => {
     const regular = await load(await exportLotte([order], sender));
     expect(regular.getCell("N2").value).toBe(quantity);
   });
+  it.each(["coupang", "smartstore", "toss"])("%s 수령인이 달라도 같은 주소의 여러 상품을 한 행으로 묶는다", async (platform) => {
+    const w = new ExcelJS.Workbook();
+    await w.xlsx.readFile(`samples/${platform}.xlsx`);
+    const result = await readSplitOrders(await bytes(w), `${platform}.xlsx`, "test");
+    const base = { ...result.orders[0], orderId: "order-1", receiverName: "테스트", address: "서울시 테스트로 1 101호", quantity: 4,
+      optionName: "코지 베이지 무릎담요(100x150)", productName: "베이지 상품", deliveryMessage: "문 앞" };
+    const otherAddress = { ...base, orderId: "order-2", address: "서울시 테스트로 1 102호" };
+    const second = { ...base, orderId: "order-3", optionName: "코지 그레이 무릎담요(100x150)", productName: "그레이 상품", deliveryMessage: "벨 눌러주세요" };
+    const otherReceiver = { ...base, orderId: "order-4", receiverName: "다른 수령인" };
+    const orders = [base, otherAddress, second, otherReceiver];
+    const original = structuredClone(orders);
+    const rows = orders.map((order) => ({ order, group: "plain" as const }));
+    const sheet = await load(await exportSplitGroup(rows, "plain", sender));
+    expect(sheet.rowCount).toBe(3);
+    expect(sheet.getCell("A2").text).toBe("order-1,order-3,order-4");
+    expect(sheet.getCell("L2").text).toBe("코지 베이지 무릎담요(100x150)-4개,코지 그레이 무릎담요(100x150)-4개,코지 베이지 무릎담요(100x150)-4개");
+    expect(sheet.getCell("M2").text).toBe("베이지 상품-4개,그레이 상품-4개,베이지 상품-4개");
+    expect(sheet.getCell("N2").value).toBe(1);
+    expect(sheet.getCell("O2").text).toBe("문 앞,벨 눌러주세요");
+    expect(sheet.getCell("K3").text).toBe(otherAddress.address);
+    expect(sheet.getCell("G2").text).toBe(base.receiverName);
+    const single = await load(await exportSplitGroup([rows[0]], "plain", sender));
+    for (let c = 1; c <= 19; c++) {
+      expect(sheet.getCell(2, c).style).toEqual(single.getCell(2, c).style);
+      if (![1, 12, 13, 15].includes(c)) expect(sheet.getCell(2, c).value).toEqual(single.getCell(2, c).value);
+    }
+    const repeated = await load(await exportSplitGroup(rows, "plain", sender));
+    expect(repeated.getRow(2).values).toEqual(sheet.getRow(2).values);
+    expect(orders).toEqual(original);
+    const orange = await load(await exportSplitGroup(rows.map((r) => ({ ...r, group: "orange" })), "orange", sender));
+    expect(orange.rowCount).toBe(5);
+    expect(orange.getCell("L2").text).toBe("Blanket");
+    expect((await load(await exportLotte(orders, sender))).rowCount).toBe(5);
+  });
   it("주황색 외에는 지정으로 분류하고 주문이 없는 쪽은 헤더만 만든다", async () => {
     expect(
       classifyFill({
