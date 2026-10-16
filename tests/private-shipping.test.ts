@@ -183,8 +183,8 @@ describe("개인용 분리 출력", () => {
     const sheet = await load(await exportSplitGroup(rows, "plain", sender));
     expect(sheet.rowCount).toBe(3);
     expect(sheet.getCell("A2").text).toBe("order-1,order-3,order-4");
-    expect(sheet.getCell("L2").text).toBe("코지 베이지 무릎담요(100x150)-4개,코지 그레이 무릎담요(100x150)-4개,코지 베이지 무릎담요(100x150)-4개");
-    expect(sheet.getCell("M2").text).toBe("베이지 상품-4개,그레이 상품-4개,베이지 상품-4개");
+    expect(sheet.getCell("L2").text).toBe("코지 베이지 무릎담요(100x150)-4개 ■ 코지 그레이 무릎담요(100x150)-4개 ■ 코지 베이지 무릎담요(100x150)-4개");
+    expect(sheet.getCell("M2").text).toBe("베이지 상품-4개 ■ 그레이 상품-4개 ■ 베이지 상품-4개");
     expect(sheet.getCell("N2").value).toBe(1);
     expect(sheet.getCell("O2").text).toBe("문 앞,벨 눌러주세요");
     expect(sheet.getCell("K3").text).toBe(otherAddress.address);
