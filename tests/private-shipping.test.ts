@@ -137,7 +137,7 @@ describe("개인용 분리 출력", () => {
       expect(sheet.getCell("L1").text).toBe("상품명1");
       result.orders.forEach((order, i) => {
         const singleParcel = group === "plain";
-        expect(sheet.getCell(i + 2, 12).text).toBe(group === "orange" ? "Blanket" : order.optionName);
+        expect(sheet.getCell(i + 2, 12).text).toBe(group === "orange" ? "Blanket" : `${order.optionName}-${order.quantity}개`);
         expect(sheet.getCell(i + 2, 13).text).toBe(group === "orange" ? order.optionName : singleParcel ? `${order.productName}-${order.quantity}개` : order.productName);
         expect(sheet.getCell(i + 2, 11).text).toBe(order.address);
         expect(sheet.getCell(i + 2, 14).value).toBe(singleParcel ? 1 : order.quantity);
@@ -158,7 +158,7 @@ describe("개인용 분리 출력", () => {
     const rows = [{ order, group: "plain" as const }];
     const sheet = await load(await exportSplitGroup(rows, "plain", sender));
     expect(sheet.rowCount).toBe(2);
-    expect(sheet.getCell("L2").text).toBe(order.optionName);
+    expect(sheet.getCell("L2").text).toBe(`${order.optionName}-${quantity}개`);
     expect(sheet.getCell("M2").text).toBe(`코지 블루 무릎담요(100x150)-${quantity}개`);
     expect(sheet.getCell("N2").value).toBe(1);
     // Repeated downloads must not mutate the source or append the quantity twice.

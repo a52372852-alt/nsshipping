@@ -112,7 +112,7 @@ export async function exportSplitGroup(
       order.receiverPhone2,
       order.postalCode,
       order.address,
-      order.optionName,
+      singleParcel ? `${order.optionName}-${order.quantity}개` : order.optionName,
       singleParcel ? `${order.productName}-${order.quantity}개` : order.productName,
       singleParcel ? 1 : order.quantity,
       order.deliveryMessage,
