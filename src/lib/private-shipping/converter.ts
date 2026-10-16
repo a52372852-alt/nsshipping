@@ -122,7 +122,7 @@ export async function exportSplitGroup(
       order.receiverPhone2,
       order.postalCode,
       order.address,
-      singleParcel ? bundle.map((item) => `${item.optionName}-${item.quantity}개`).join(" ■ ") : order.optionName,
+      singleParcel ? bundle.map((item) => `${item.platform === "smartstore" ? item.productName : item.optionName}-${item.quantity}개`).join(" ■ ") : order.optionName,
       singleParcel ? bundle.map((item) => `${item.productName}-${item.quantity}개`).join(" ■ ") : order.productName,
       singleParcel ? 1 : order.quantity,
       joinUnique("deliveryMessage"),
