@@ -20,6 +20,26 @@ const load = async (b: ArrayBuffer) => {
   return w.worksheets[0];
 };
 describe("개인용 분리 출력", () => {
+  it.each([
+    ["코지 블루, 100x150, 1개", 1, "코지 블루, 100x150, 1개"],
+    ["코지 블루, 100x150, 1개", 2, "코지 블루, 100x150, 1개-2개"],
+    ["코지 블루, 100x150, 11개", 1, "코지 블루, 100x150, 11개-1개"],
+    ["코지 블루, 100x150", 1, "코지 블루, 100x150-1개"],
+  ])("토스 옵션 %s의 %i개 주문 수량 표시", async (optionName, quantity, expected) => {
+    const w = new ExcelJS.Workbook();
+    await w.xlsx.readFile("samples/toss.xlsx");
+    const result = await readSplitOrders(await bytes(w), "toss.xlsx", "test");
+    const order = { ...result.orders[0], optionName, quantity };
+    const original = structuredClone(order);
+    const rows = [{ order, group: "plain" as const }];
+    const sheet = await load(await exportSplitGroup(rows, "plain", sender));
+    expect(sheet.getCell("L2").text).toBe(expected);
+    expect(sheet.getCell("M2").text).toBe(`${order.productName}-${quantity}개`);
+    expect(sheet.getCell("N2").value).toBe(1);
+    const repeated = await load(await exportSplitGroup(rows, "plain", sender));
+    expect(repeated.getRow(2).values).toEqual(sheet.getRow(2).values);
+    expect(order).toEqual(original);
+  });
   it("표준 주황색과 원본 기본 배경을 구분하고 이전 노란색은 지정송하인으로 분류하지 않는다", () => {
     for (const argb of ["FFFFC000", "FFC000"]) {
       expect(
@@ -137,7 +157,7 @@ describe("개인용 분리 출력", () => {
       expect(sheet.getCell("L1").text).toBe("상품명1");
       result.orders.forEach((order, i) => {
         const singleParcel = group === "plain";
-        expect(sheet.getCell(i + 2, 12).text).toBe(group === "orange" ? "Blanket" : `${platform === "smartstore" ? order.productName : order.optionName}-${order.quantity}개`);
+        expect(sheet.getCell(i + 2, 12).text).toBe(group === "orange" ? "Blanket" : platform === "toss" && order.quantity === 1 ? order.optionName : `${platform === "smartstore" ? order.productName : order.optionName}-${order.quantity}개`);
         expect(sheet.getCell(i + 2, 13).text).toBe(group === "orange" ? order.optionName : singleParcel ? `${order.productName}-${order.quantity}개` : order.productName);
         expect(sheet.getCell(i + 2, 11).text).toBe(order.address);
         expect(sheet.getCell(i + 2, 14).value).toBe(singleParcel ? 1 : order.quantity);
@@ -158,7 +178,7 @@ describe("개인용 분리 출력", () => {
     const rows = [{ order, group: "plain" as const }];
     const sheet = await load(await exportSplitGroup(rows, "plain", sender));
     expect(sheet.rowCount).toBe(2);
-    expect(sheet.getCell("L2").text).toBe(`${platform === "smartstore" ? order.productName : order.optionName}-${quantity}개`);
+    expect(sheet.getCell("L2").text).toBe(platform === "toss" && quantity === 1 ? order.optionName : `${platform === "smartstore" ? order.productName : order.optionName}-${quantity}개`);
     expect(sheet.getCell("M2").text).toBe(`코지 블루 무릎담요(100x150)-${quantity}개`);
     expect(sheet.getCell("N2").value).toBe(1);
     // Repeated downloads must not mutate the source or append the quantity twice.

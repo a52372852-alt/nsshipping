@@ -67,6 +67,14 @@ export function markDeliveryMessage(message: string): string {
   return body ? `[R] ${body}` : "[R]";
 }
 
+function splitProductLabel(order: NormalizedOrder): string {
+  const name = order.platform === "smartstore" ? order.productName : order.optionName;
+  // A single Toss unit already stated in the option needs no extra suffix.
+  if (order.platform === "toss" && order.quantity === 1 && /(?:^|,)\s*1\s*개\s*$/.test(name))
+    return name.trimEnd();
+  return `${name}-${order.quantity}개`;
+}
+
 export async function exportSplitGroup(
   rows: SplitOrder[],
   group: "orange" | "plain",
@@ -122,7 +130,7 @@ export async function exportSplitGroup(
       order.receiverPhone2,
       order.postalCode,
       order.address,
-      singleParcel ? bundle.map((item) => `${item.platform === "smartstore" ? item.productName : item.optionName}-${item.quantity}개`).join(" ■ ") : order.optionName,
+      singleParcel ? bundle.map(splitProductLabel).join(" ■ ") : order.optionName,
       singleParcel ? bundle.map((item) => `${item.productName}-${item.quantity}개`).join(" ■ ") : order.productName,
       singleParcel ? 1 : order.quantity,
       joinUnique("deliveryMessage"),
