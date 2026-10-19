@@ -15,3 +15,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 배포 결과와 소스 커밋은 `docs/deployment.md`에 기록한다.
 
 - 웹 하단은 `VERSION`과 `RELEASE_DATE`를 빌드 시 읽어 표시한다. 배포마다 두 파일을 실제 배포 버전과 한국 날짜(YYYY-MM-DD)로 갱신한다.
+
+## 묶음배송 스킬
+
+- 내 롯데택배 분리 출력의 묶음배송·화면 건수·송장 번호를 수정할 때는 `skills/ns-shipping-bundles/SKILL.md`를 읽고 확정된 표시 규칙을 적용한다.
