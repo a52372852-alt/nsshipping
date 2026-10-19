@@ -297,9 +297,19 @@ export default function PrivateShipping() {
                   {bundles.flatMap(({ orders, group }, bundleIndex) =>
                     orders.map((order, itemIndex) => (
                       <tr key={order.id}>
-                        {itemIndex === 0 && (
-                          <td rowSpan={orders.length}>{bundleIndex + 1}</td>
-                        )}
+                        <td>
+                          {itemIndex === 0 ? (
+                            bundleIndex + 1
+                          ) : (
+                            <span
+                              role="img"
+                              aria-label={`${bundleIndex + 1}번 송장 묶음 상품`}
+                              title={`${bundleIndex + 1}번 송장 묶음 상품`}
+                            >
+                              📦
+                            </span>
+                          )}
+                        </td>
                         <td>{order.receiverName}</td>
                         <td>{order.productName}</td>
                         <td>{order.quantity}</td>
