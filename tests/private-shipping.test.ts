@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import ExcelJS from "exceljs";
+import { bundleSplitOrders } from "@/lib/private-shipping/bundles";
 import {
   readSplitOrders,
   exportSplitGroup,
@@ -200,7 +201,17 @@ describe("개인용 분리 출력", () => {
     const orders = [base, otherAddress, second, otherReceiver];
     const original = structuredClone(orders);
     const rows = orders.map((order) => ({ order, group: "plain" as const }));
+    const bundles = bundleSplitOrders(rows);
+    expect(bundles.map((bundle) => bundle.orders)).toEqual([[base, second, otherReceiver], [otherAddress]]);
+    expect(bundleSplitOrders([
+      rows[0],
+      { order: { ...base, address: "  서울시   테스트로 1 101호  " }, group: "plain" },
+      { order: base, group: "orange" },
+      { order: base, group: "orange" },
+    ]).map((bundle) => bundle.orders.length)).toEqual([2, 1, 1]);
+    expect(bundleSplitOrders([])).toEqual([]);
     const sheet = await load(await exportSplitGroup(rows, "plain", sender));
+    expect(sheet.rowCount - 1).toBe(bundles.length);
     expect(sheet.rowCount).toBe(3);
     expect(sheet.getCell("A2").text).toBe("order-1,order-3,order-4");
     expect(sheet.getCell("L2").text).toBe(platform === "smartstore" ? "베이지 상품-4개 ■ 그레이 상품-4개 ■ 베이지 상품-4개" : "코지 베이지 무릎담요(100x150)-4개 ■ 코지 그레이 무릎담요(100x150)-4개 ■ 코지 베이지 무릎담요(100x150)-4개");

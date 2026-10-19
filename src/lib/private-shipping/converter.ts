@@ -1,4 +1,5 @@
 import ExcelJS from "exceljs";
+import { bundleSplitOrders } from "./bundles";
 import { readOrders } from "@/lib/excel/reader";
 import { detectPlatform } from "@/lib/excel/detectPlatform";
 import { normalizeHeader } from "@/lib/excel/cells";
@@ -106,14 +107,9 @@ export async function exportSplitGroup(
   schema.headerStyles.forEach((s, i) => {
     sheet.getCell(1, i + 1).style = structuredClone(s) as ExcelJS.Style;
   });
-  const bundles = new Map<string, NormalizedOrder[]>();
-  for (const order of orders) {
-    const key = order.address.trim().replace(/\s+/g, " ");
-    const bundle = bundles.get(key);
-    if (bundle) bundle.push(order);
-    else bundles.set(key, [order]);
-  }
-  for (const bundle of bundles.values()) {
+  for (const { orders: bundle } of bundleSplitOrders(rows).filter(
+    (bundle) => bundle.group === group,
+  )) {
     const order = bundle[0];
     const joinUnique = (field: "orderId" | "deliveryMessage") =>
       [...new Set(bundle.map((item) => item[field]).filter(Boolean))].join(",");

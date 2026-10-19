@@ -12,6 +12,7 @@ import {
   loadPrivateSender,
   savePrivateSender,
 } from "@/lib/private-shipping/settings";
+import { bundleSplitOrders } from "@/lib/private-shipping/bundles";
 import type { SplitOrder } from "@/lib/private-shipping/converter";
 import styles from "./private-shipping.module.css";
 
@@ -86,6 +87,7 @@ export default function PrivateShipping() {
       setBusy(false);
     }
   }
+  const bundles = bundleSplitOrders(rows);
   const issues = rows.flatMap((r) => [
     ...validateOrder(r.order)
       .filter((i) => i.level === "error")
@@ -218,7 +220,7 @@ export default function PrivateShipping() {
           <section data-nosnippet>
             <div className="workspace-title">
               <h2>
-                총 {rows.length}건 · 파일 {fileNames.length}개
+                총 {bundles.length}건 · 파일 {fileNames.length}개
               </h2>
               <Button
                 variant="outline"
@@ -235,7 +237,9 @@ export default function PrivateShipping() {
             </div>
             <div className="carrier-options" style={{ margin: "24px 0" }}>
               {(["orange", "plain"] as const).map((group) => {
-                const count = rows.filter((r) => r.group === group).length;
+                const count = bundles.filter(
+                  (bundle) => bundle.group === group,
+                ).length;
                 return (
                   <section
                     key={group}
@@ -282,7 +286,7 @@ export default function PrivateShipping() {
               <table>
                 <thead>
                   <tr>
-                    <th>원본 행</th>
+                    <th>송장 번호</th>
                     <th>수령인</th>
                     <th>상품명</th>
                     <th>수량</th>
@@ -290,15 +294,19 @@ export default function PrivateShipping() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map(({ order, group }) => (
-                    <tr key={order.id}>
-                      <td>{order.sourceRow}</td>
-                      <td>{order.receiverName}</td>
-                      <td>{order.productName}</td>
-                      <td>{order.quantity}</td>
-                      <td>{group === "orange" ? "지정송하인" : "지정"}</td>
-                    </tr>
-                  ))}
+                  {bundles.flatMap(({ orders, group }, bundleIndex) =>
+                    orders.map((order, itemIndex) => (
+                      <tr key={order.id}>
+                        {itemIndex === 0 && (
+                          <td rowSpan={orders.length}>{bundleIndex + 1}</td>
+                        )}
+                        <td>{order.receiverName}</td>
+                        <td>{order.productName}</td>
+                        <td>{order.quantity}</td>
+                        <td>{group === "orange" ? "지정송하인" : "지정"}</td>
+                      </tr>
+                    )),
+                  )}
                 </tbody>
               </table>
             </div>
