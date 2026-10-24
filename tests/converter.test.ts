@@ -204,7 +204,7 @@ describe("데이터 보존·검증", () => {
       applyProductRules(original, [
         { id: "r", from: "일부 문자열", to: "변환" },
       ]),
-    ).toBe(original);
+    ).toEqual(applyProductRules(original, []));
   });
 });
 describe("롯데 출력과 다시 읽기", () => {
