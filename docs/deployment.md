@@ -2,6 +2,19 @@
 
 ## 최신 배포
 
+- 버전 31 배포 성공. Sites 상태: succeeded. 기존 공개 접근 및 도메인 유지.
+- 소스 커밋: 446ae4a2694d9be2327a17b0bc9b699aa51b2631
+- 커밋 제목: [v31] 싱글 더블 뒤 치수 제거 및 주문수량 유지
+- 배포 ID: appgdep_6adcc2e3f88c8191a049308c558be9b6
+- 배포 URL: https://nshome-shipping.a52372852.chatgpt.site
+- 배포 체크아웃: /private/tmp/nshome-v31-deploy
+- 정적 빌드 및 TypeScript 검사 통과.
+
+- 2026-10-24: 세 쇼핑몰 싱글·더블 뒤 치수 제거. 담요 단어 없는 단축명 및 저장 치환명도 처리. 색상·수량·묶음 기준·Blanket 유지.
+- 검증: 단위·통합 테스트 94개 통과.
+
+## 버전 30
+
 - 버전 30 배포 성공. Sites 상태: succeeded. 기존 공개 접근 및 도메인 유지.
 - 소스 커밋: 72a9bcfc57db840d99f41c2f8e983f9b998cefd9
 - 커밋 제목: [v30] 세 쇼핑몰 담요 상품명 단축 및 수량 표시 유지

@@ -128,6 +128,68 @@ describe("담요 상품명 단축", () => {
       expect(parsed.split).toEqual(original);
     });
   }
+  for (const platform of ["coupang", "toss", "smartstore"] as const) {
+    it(`${platform}: 담요 단어 없는 단축명 뒤 치수를 제거하고 엑셀 수량 유지`, async () => {
+      const dimensions = [
+        "(150x200)",
+        " 180×200cm",
+        "[150*200cm]",
+        "180cmX200cm",
+        "(150 x 200)cm",
+        "_180x200, 1개",
+      ];
+      const rows = names.slice(3).map((name, i) => {
+        const text = name + dimensions[i];
+        const order = applyProductRules(
+          {
+            ...base,
+            id: String(i),
+            platform,
+            productName: text,
+            optionName: text,
+            quantity: i + 1,
+          },
+          [],
+        );
+        expect(order.productName).toBe(name);
+        expect(order.optionName).toBe(name);
+        return { order, group: "plain" as const };
+      });
+      const sheet = await load(await exportSplitGroup(rows, "plain", sender));
+      const expected = names
+        .slice(3)
+        .map((name, i) => `${name}-${i + 1}개`)
+        .join(" ■ ");
+      expect(sheet.getCell("L2").value).toBe(expected);
+      expect(sheet.getCell("M2").value).toBe(expected);
+      expect(sheet.getCell("N2").value).toBe(1);
+      const orange = await load(
+        await exportSplitGroup(
+          rows.map((r) => ({ ...r, group: "orange" as const })),
+          "orange",
+          sender,
+        ),
+      );
+      names.slice(3).forEach((name, i) => {
+        expect(orange.getCell(i + 2, 12).value).toBe("Blanket");
+        expect(orange.getCell(i + 2, 13).value).toBe(name);
+        expect(orange.getCell(i + 2, 14).value).toBe(i + 1);
+      });
+    });
+  }
+  it("사용자 저장 치환명에 붙은 치수도 제거한다", () => {
+    const order = {
+      ...base,
+      productName: "판매 상품",
+      optionName: "그레이더블(180×200cm)",
+    };
+    const result = applyProductRules(order, [
+      { id: "r", from: order.productName, to: "그레이더블(180×200cm)" },
+    ]);
+    expect(result.productName).toBe("그레이더블");
+    expect(result.optionName).toBe("그레이더블");
+    expect(result.quantity).toBe(2);
+  });
   it("선택 옵션을 제목의 여러 색상·사이즈보다 우선하고 묶음별 상품 수량을 유지한다", async () => {
     const order = applyProductRules(
       {

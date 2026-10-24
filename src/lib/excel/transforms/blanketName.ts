@@ -4,6 +4,15 @@ const colors = ["포레스트그린", "베이지", "그레이", "블루"] as con
 const sizes = ["무릎담요", "싱글", "더블"] as const;
 const compact = (text: string) => text.normalize("NFKC").replace(/\s+/g, "");
 
+// Recognize the approved short names even when a seller appends dimensions.
+// Keep other goods (e.g. a bed frame) out of this narrowly scoped cleanup.
+export function stripBedDimensions(text: string): string {
+  const match = compact(text).match(
+    /^(베이지|그레이|포레스트그린)(싱글|더블)[_:/-]?[([]?\d+(?:\.\d+)?(?:cm|mm)?[x×*]\d+(?:\.\d+)?(?:cm|mm)?[)\]]?(?:cm|mm)?(?:[,/-]?\d+개)?$/i,
+  );
+  return match ? `${match[1]}${match[2]}` : text;
+}
+
 function selectedColor(text: string) {
   return colors.filter((color) => text.includes(color));
 }
@@ -19,8 +28,8 @@ function selectedSize(text: string) {
 }
 
 export function shortenBlanketName(order: NormalizedOrder): NormalizedOrder {
-  const product = compact(order.productName);
-  const option = compact(order.optionName);
+  const product = compact(stripBedDimensions(order.productName));
+  const option = compact(stripBedDimensions(order.optionName));
   const exactShort =
     /^(?:무릎담요_(?:그레이|베이지|블루)|(?:베이지|그레이|포레스트그린)(?:싱글|더블))$/;
   // Do not shorten unrelated goods that merely share a color and size.

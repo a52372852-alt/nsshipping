@@ -1,5 +1,5 @@
 import type { NormalizedOrder, ProductRule } from "@/types/order";
-import { shortenBlanketName } from "./blanketName";
+import { shortenBlanketName, stripBedDimensions } from "./blanketName";
 export function applyProductRules(
   order: NormalizedOrder,
   rules: ProductRule[],
@@ -11,6 +11,10 @@ export function applyProductRules(
       rule.from.trim() === order.productName.trim(),
   );
   return rule
-    ? { ...order, productName: rule.to.trim() }
+    ? {
+        ...order,
+        productName: stripBedDimensions(rule.to.trim()),
+        optionName: stripBedDimensions(order.optionName),
+      }
     : shortenBlanketName(order);
 }
