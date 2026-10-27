@@ -1,9 +1,12 @@
 import type { NormalizedOrder, ProductRule } from "@/types/order";
 import { shortenBlanketName, stripBedDimensions } from "./blanketName";
+import { shortenTossBlanketName } from "./tossBlanketName";
 export function applyProductRules(
   order: NormalizedOrder,
   rules: ProductRule[],
 ): NormalizedOrder {
+  const tossBlanket = shortenTossBlanketName(order);
+  if (tossBlanket) return tossBlanket;
   const rule = rules.find(
     (rule) =>
       rule.from.trim() &&
