@@ -297,7 +297,21 @@ export default function ShippingApp() {
           <h1>
             마켓 주문 엑셀을
             <br />
-            <span>내 택배사 양식으로</span> 한 번에.
+            <span>내 택배사 양식으로</span>{" "}
+            <span className="hero-ending">
+              한 번에.
+              <Link
+                href="/my-shipping"
+                prefetch={false}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="hero-shipping-link"
+                aria-label="내 롯데택배 분리 출력 (새 탭)"
+                title="내 롯데택배 분리 출력 (새 탭)"
+              >
+                <Package aria-hidden="true" />
+              </Link>
+            </span>
           </h1>
           <p className="hero-description">
             쿠팡 · 스마트스토어 · 토스쇼핑 주문 엑셀을 올리면
@@ -518,25 +532,6 @@ export default function ShippingApp() {
         </nav>
         <span>
           © {new Date().getFullYear()} NS Shipping
-          <Link
-            href="/my-shipping"
-            prefetch={false}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            aria-label="내 롯데택배 분리 출력 (새 탭)"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 24,
-              height: 24,
-              marginLeft: 6,
-              color: "#94a3b8",
-              textDecoration: "none",
-            }}
-          >
-            <span aria-hidden="true">·</span>
-          </Link>
         </span>
       </footer>
       {settings && (

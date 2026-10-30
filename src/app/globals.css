@@ -249,6 +249,34 @@ main {
 .hero h1 > span {
   color: var(--blue);
 }
+.hero h1 > .hero-ending {
+  color: inherit;
+  white-space: nowrap;
+}
+.hero-shipping-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: 6px;
+  vertical-align: middle;
+  color: #738098;
+  border-radius: 8px;
+  text-decoration: none;
+}
+.hero-shipping-link svg {
+  width: 21px;
+  height: 21px;
+}
+.hero-shipping-link:hover {
+  color: var(--blue);
+  background: #edf2ff;
+}
+.hero-shipping-link:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
 .hero-description {
   margin: 19px auto 0;
   font-size: 16px;
